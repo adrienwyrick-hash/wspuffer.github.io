@@ -829,7 +829,29 @@ function flap() {
 function spawnCoral() {
   var margin = 70;
   var top = margin + Math.random() * (H - gap - margin * 2 - 80);
-  corals.push({ x: W + 60, top: top, passed: false, seed: Math.random() });
+  var p = { x: W + 60, top: top, passed: false, seed: Math.random() * 100 };
+  p.flowersTop = makeReefFlowers(0, top);
+  p.flowersBot = makeReefFlowers(top + gap, H - 30);
+  corals.push(p);
+}
+
+function makeReefFlowers(yStart, yEnd) {
+  var flowers = [];
+  var span = yEnd - yStart;
+  if (span < 20) return flowers;
+  var count = Math.max(3, Math.floor(span / 38));
+  for (var i = 0; i < count; i++) {
+    var t = (i + 0.15 + Math.random() * 0.7) / count;
+    flowers.push({
+      side: Math.random() < 0.5 ? -1 : 1,
+      y: yStart + t * span,
+      type: Math.floor(Math.random() * 3),  // 0 anemone, 1 polyps, 2 sea fan
+      hue: 280 + Math.random() * 130,       // pinks → purples → corals
+      size: 9 + Math.random() * 8,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+  return flowers;
 }
 
 function die() {
@@ -1472,44 +1494,132 @@ function drawBubbles() {
 
 function drawCoral(p) {
   var pw = 72;
-  // top coral pillar
-  drawCoralPillar(p.x, 0, pw, p.top, p.seed, true);
-  // bottom coral pillar
-  drawCoralPillar(p.x, p.top + gap, pw, H - (p.top + gap), p.seed + 0.5, false);
+  drawReefPillar(p, p.x, 0, pw, p.top, true,  p.flowersTop || []);
+  drawReefPillar(p, p.x, p.top + gap, pw, H - (p.top + gap), false, p.flowersBot || []);
 }
 
-function drawCoralPillar(x, y, w, h, seed, isTop) {
-  // base
+function drawReefPillar(p, x, y, w, h, isTop, flowers) {
+  // jagged silhouette clip
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  var step = 10;
+  for (var yy = y; yy <= y + h; yy += step) {
+    var bump = Math.sin((yy + p.seed) * 0.22) * 4 + Math.sin((yy + p.seed) * 0.71) * 2;
+    ctx.lineTo(x + bump, yy);
+  }
+  ctx.lineTo(x, y + h);
+  ctx.lineTo(x + w, y + h);
+  for (var yy2 = y + h; yy2 >= y; yy2 -= step) {
+    var bump2 = Math.sin((yy2 + p.seed + 19) * 0.24) * 4 + Math.cos((yy2 + p.seed) * 0.6) * 2.5;
+    ctx.lineTo(x + w + bump2, yy2);
+  }
+  ctx.closePath();
+  ctx.clip();
+
+  // base rock gradient
   var g = ctx.createLinearGradient(x, 0, x + w, 0);
-  g.addColorStop(0, '#d96a6a');
-  g.addColorStop(0.5, '#ff8a5b');
-  g.addColorStop(1, '#c95444');
+  g.addColorStop(0, '#5b2a55');
+  g.addColorStop(0.5, '#8a3a78');
+  g.addColorStop(1, '#42204a');
   ctx.fillStyle = g;
-  ctx.fillRect(x, y, w, h);
-  // bumps
-  ctx.fillStyle = '#ffae7a';
-  var bumpCount = 6;
-  for (var i = 0; i < bumpCount; i++) {
-    var by = y + (i + 0.5) * (h / bumpCount);
-    var br = 8 + ((seed * 31 + i * 17) % 7);
+  ctx.fillRect(x - 6, y, w + 12, h);
+
+  // mossy speckles
+  ctx.fillStyle = 'rgba(255,180,210,0.18)';
+  for (var sp = 0; sp < 22; sp++) {
+    var sy = y + ((sp * 37 + p.seed * 13) % h);
+    var sx = x + ((sp * 11 + p.seed * 7) % w);
+    ctx.beginPath(); ctx.arc(sx, sy, 1.8, 0, Math.PI * 2); ctx.fill();
+  }
+  // teal/algae streaks
+  ctx.fillStyle = 'rgba(127,193,201,0.22)';
+  for (var sk = 0; sk < 10; sk++) {
+    var ky = y + ((sk * 71 + p.seed * 17) % Math.max(8, h - 8));
+    ctx.fillRect(x + 6 + ((sk * 9) % (w - 12)), ky, 9, 4);
+  }
+  ctx.restore();
+
+  // cap stripe (teal lip at the gap opening)
+  var capY = isTop ? y + h - 7 : y;
+  ctx.fillStyle = '#7fc1c9';
+  ctx.fillRect(x - 5, capY, w + 10, 7);
+  ctx.fillStyle = 'rgba(255,255,255,0.28)';
+  ctx.fillRect(x - 5, capY, w + 10, 2);
+
+  // flowers
+  for (var i = 0; i < flowers.length; i++) {
+    var f = flowers[i];
+    var fx = f.side > 0 ? x + w : x;
+    drawReefFlower(fx, f.y, f.side, f.type, f.size, f.hue, camT, f.phase);
+  }
+}
+
+function drawReefFlower(x, y, side, type, size, hue, t, phase) {
+  var sway = Math.sin(t * 2.2 + phase) * 2;
+  ctx.save();
+  ctx.translate(x + side * sway, y);
+  ctx.scale(side, 1);
+  if (type === 0) {
+    // anemone — tendril cluster
+    ctx.strokeStyle = 'hsl(' + hue + ',85%,72%)';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    var tend = 10;
+    for (var i = 0; i < tend; i++) {
+      var a = -Math.PI * 0.55 + (i / (tend - 1)) * Math.PI * 1.1;
+      var len = size * (0.9 + Math.sin(i + t * 2) * 0.12);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(Math.cos(a) * len * 0.6 + sway * 0.5,
+                           Math.sin(a) * len * 0.6,
+                           Math.cos(a) * len, Math.sin(a) * len);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'hsl(' + hue + ',90%,55%)';
+    ctx.beginPath(); ctx.arc(0, 0, size * 0.42, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'hsl(' + hue + ',95%,80%)';
+    ctx.beginPath(); ctx.arc(-size * 0.14, -size * 0.14, size * 0.18, 0, Math.PI * 2); ctx.fill();
+  } else if (type === 1) {
+    // polyp cluster
+    ctx.fillStyle = 'hsl(' + (hue - 20) + ',70%,38%)';
     ctx.beginPath();
-    ctx.arc(isTop ? x + w - 4 : x + 4, by, br, 0, Math.PI * 2);
+    for (var k = 0; k < 6; k++) {
+      var ang = k * (Math.PI * 2 / 6);
+      ctx.moveTo(Math.cos(ang) * size, Math.sin(ang) * size);
+      ctx.arc(Math.cos(ang) * size * 0.5, Math.sin(ang) * size * 0.5, size * 0.55, 0, Math.PI * 2);
+    }
     ctx.fill();
-  }
-  // cap (lip facing the gap)
-  ctx.fillStyle = '#b13c3c';
-  if (isTop) {
-    ctx.fillRect(x - 6, y + h - 12, w + 12, 12);
+    ctx.fillStyle = 'hsl(' + hue + ',95%,72%)';
+    for (var pp = 0; pp < 9; pp++) {
+      var pa = pp * 1.3;
+      ctx.beginPath();
+      ctx.arc(Math.cos(pa) * size * 0.35, Math.sin(pa) * size * 0.35, size * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+    }
   } else {
-    ctx.fillRect(x - 6, y, w + 12, 12);
+    // sea fan — branched
+    ctx.strokeStyle = 'hsl(' + hue + ',75%,58%)';
+    ctx.lineWidth = 2.4;
+    ctx.lineCap = 'round';
+    for (var b = 0; b < 6; b++) {
+      var ba = -Math.PI * 0.55 + (b / 5) * Math.PI * 1.1;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(Math.cos(ba) * size * 0.35,
+                           Math.sin(ba) * size * 0.35 - size * 0.2,
+                           Math.cos(ba) * size, Math.sin(ba) * size);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'hsl(' + hue + ',85%,68%)';
+    for (var d = 0; d < 6; d++) {
+      var da = -Math.PI * 0.55 + (d / 5) * Math.PI * 1.1;
+      ctx.beginPath();
+      ctx.arc(Math.cos(da) * size, Math.sin(da) * size, size * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
-  // tiny polyps
-  ctx.fillStyle = '#ffd2b3';
-  for (var p2 = 0; p2 < 10; p2++) {
-    var py = y + ((seed * 97 + p2 * 23) % h);
-    var px = x + ((seed * 53 + p2 * 11) % w);
-    ctx.beginPath(); ctx.arc(px, py, 1.6, 0, Math.PI * 2); ctx.fill();
-  }
+  ctx.restore();
 }
 
 function drawPuffMeter() {
