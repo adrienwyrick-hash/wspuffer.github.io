@@ -995,11 +995,17 @@ function update(dt) {
 }
 
 function drawBg() {
+  // matches wspuffer.com body gradient
   var g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#0a4d6e');
-  g.addColorStop(0.55, '#0e6b8a');
-  g.addColorStop(1, '#062a3a');
+  g.addColorStop(0, '#021522');
+  g.addColorStop(0.45, '#062a3a');
+  g.addColorStop(1, '#0c4660');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // soft top halo to match the website's radial layer
+  var halo = ctx.createRadialGradient(W * 0.5, -H * 0.15, H * 0.1, W * 0.5, -H * 0.15, H * 0.9);
+  halo.addColorStop(0, 'rgba(40,110,150,0.35)');
+  halo.addColorStop(1, 'rgba(40,110,150,0)');
+  ctx.fillStyle = halo; ctx.fillRect(0, 0, W, H);
 
   // sun rays from top
   ctx.save();
@@ -2145,7 +2151,7 @@ requestAnimationFrame(tick);
 // NOTE: Replace the placeholder URLs with your live Privacy Policy and Terms of Use URLs
 // before submitting to the App Store. Apple requires both for apps with In-App Purchases.
 var PRIVACY_URL = 'https://wspuffer.com/privacy.html';
-var TERMS_URL   = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+var TERMS_URL   = 'https://wspuffer.com/terms.html';
 
 function openExternal(url) {
   // Capacitor / Cordova path: open in system browser when available
