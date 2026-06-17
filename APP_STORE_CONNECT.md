@@ -29,7 +29,7 @@ For each product:
 
 - [ ] Click "Get Started"
 - [ ] Select **Data Not Collected**
-- [ ] Privacy Policy URL: **https://adrienwyrick-hash.github.io/wspuffer.github.io/privacy.html** (or your custom domain once DNS resolves)
+- [ ] Privacy Policy URL: **https://wspuffer.com/privacy.html**
 
 ## 4. App Information
 
