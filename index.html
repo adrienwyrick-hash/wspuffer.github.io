@@ -746,9 +746,160 @@
     G.fish.x = dW * .28;
     G.fish.y = dH * .5;
     G.fish.vy = 0; G.fish.puff = 1; G.fish.wob = 0;
-    G.corals = []; G.score = 0; G.spawn = .9;
+    G.corals = []; G.score = 0; G.spawn = .9; G.t = 0;
   }
   reset();
+
+  // ---- coral factory (reef-shaped pillars with anemones / polyps / fans) ----
+  function makeFlowers(yStart, yEnd){
+    var flowers = [];
+    var span = yEnd - yStart;
+    if (span < 16) return flowers;
+    var count = Math.max(2, Math.floor(span / 28));
+    for (var i = 0; i < count; i++){
+      var t = (i + .15 + Math.random() * .7) / count;
+      flowers.push({
+        side: Math.random() < .5 ? -1 : 1,
+        y: yStart + t * span,
+        type: Math.floor(Math.random() * 3), // 0 anemone, 1 polyps, 2 sea fan
+        hue: 280 + Math.random() * 130,      // pinks→purples→corals
+        size: 5 + Math.random() * 5,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+    return flowers;
+  }
+  function makeCoral(x, top, gap){
+    var c = { x: x, top: top, gap: gap, passed: false, seed: Math.random() * 100 };
+    c.flowersTop = makeFlowers(0, top);
+    c.flowersBot = makeFlowers(top + gap, dH);
+    return c;
+  }
+
+  function drawFlower(x, y, side, type, size, hue, t, phase){
+    var sway = Math.sin(t * 2.2 + phase) * 1.4;
+    dctx.save();
+    dctx.translate(x + side * sway, y);
+    dctx.scale(side, 1);
+    if (type === 0){
+      // anemone — tendril cluster facing outward
+      dctx.strokeStyle = 'hsl(' + hue + ',85%,72%)';
+      dctx.lineWidth = 1.6;
+      dctx.lineCap = 'round';
+      var tend = 8;
+      for (var i = 0; i < tend; i++){
+        var a = -Math.PI * .55 + (i / (tend - 1)) * Math.PI * 1.1;
+        var len = size * (.9 + Math.sin(i + t * 2) * .12);
+        dctx.beginPath();
+        dctx.moveTo(0, 0);
+        dctx.quadraticCurveTo(Math.cos(a) * len * .6 + sway * .5,
+                              Math.sin(a) * len * .6,
+                              Math.cos(a) * len, Math.sin(a) * len);
+        dctx.stroke();
+      }
+      dctx.fillStyle = 'hsl(' + hue + ',90%,55%)';
+      dctx.beginPath(); dctx.arc(0, 0, size * .42, 0, Math.PI * 2); dctx.fill();
+      dctx.fillStyle = 'hsl(' + hue + ',95%,80%)';
+      dctx.beginPath(); dctx.arc(-size * .14, -size * .14, size * .18, 0, Math.PI * 2); dctx.fill();
+    } else if (type === 1){
+      // polyp cluster — round cauliflower mass with bright dots
+      dctx.fillStyle = 'hsl(' + (hue - 20) + ',70%,38%)';
+      dctx.beginPath();
+      for (var k = 0; k < 6; k++){
+        var ang = k * (Math.PI * 2 / 6);
+        dctx.moveTo(Math.cos(ang) * size, Math.sin(ang) * size);
+        dctx.arc(Math.cos(ang) * size * .5, Math.sin(ang) * size * .5, size * .55, 0, Math.PI * 2);
+      }
+      dctx.fill();
+      dctx.fillStyle = 'hsl(' + hue + ',95%,72%)';
+      for (var p = 0; p < 7; p++){
+        var pa = p * 1.4;
+        dctx.beginPath();
+        dctx.arc(Math.cos(pa) * size * .35, Math.sin(pa) * size * .35, size * .18, 0, Math.PI * 2);
+        dctx.fill();
+      }
+    } else {
+      // sea fan — branched
+      dctx.strokeStyle = 'hsl(' + hue + ',75%,58%)';
+      dctx.lineWidth = 1.8;
+      dctx.lineCap = 'round';
+      for (var b = 0; b < 5; b++){
+        var ba = -Math.PI * .55 + (b / 4) * Math.PI * 1.1;
+        dctx.beginPath();
+        dctx.moveTo(0, 0);
+        dctx.quadraticCurveTo(Math.cos(ba) * size * .35,
+                              Math.sin(ba) * size * .35 - size * .2,
+                              Math.cos(ba) * size, Math.sin(ba) * size);
+        dctx.stroke();
+      }
+      dctx.fillStyle = 'hsl(' + hue + ',85%,68%)';
+      for (var d = 0; d < 5; d++){
+        var da = -Math.PI * .55 + (d / 4) * Math.PI * 1.1;
+        dctx.beginPath();
+        dctx.arc(Math.cos(da) * size, Math.sin(da) * size, size * .15, 0, Math.PI * 2);
+        dctx.fill();
+      }
+    }
+    dctx.restore();
+  }
+
+  function drawPillar(c, yStart, yEnd, flowers){
+    var pw = 36;
+    var x = c.x;
+    // jagged silhouette mask
+    dctx.save();
+    dctx.beginPath();
+    dctx.moveTo(x, yStart);
+    var step = 10;
+    for (var y = yStart; y <= yEnd; y += step){
+      var bump = Math.sin((y + c.seed) * .26) * 2.6 + Math.sin((y + c.seed) * .77) * 1.4;
+      dctx.lineTo(x + bump, y);
+    }
+    dctx.lineTo(x, yEnd);
+    dctx.lineTo(x + pw, yEnd);
+    for (var y2 = yEnd; y2 >= yStart; y2 -= step){
+      var bump2 = Math.sin((y2 + c.seed + 19) * .29) * 2.6 + Math.cos((y2 + c.seed) * .61) * 1.6;
+      dctx.lineTo(x + pw + bump2, y2);
+    }
+    dctx.closePath();
+    dctx.clip();
+
+    // base rock gradient
+    var rg = dctx.createLinearGradient(x, 0, x + pw, 0);
+    rg.addColorStop(0, '#5b2a55');
+    rg.addColorStop(.5, '#8a3a78');
+    rg.addColorStop(1, '#42204a');
+    dctx.fillStyle = rg;
+    dctx.fillRect(x - 4, yStart, pw + 8, yEnd - yStart);
+    // mossy speckles
+    dctx.fillStyle = 'rgba(255,180,210,.18)';
+    for (var sp = 0; sp < 14; sp++){
+      var sy = yStart + ((sp * 37 + c.seed * 13) % (yEnd - yStart));
+      var sx = x + ((sp * 11 + c.seed * 7) % pw);
+      dctx.beginPath(); dctx.arc(sx, sy, 1.4, 0, Math.PI * 2); dctx.fill();
+    }
+    // teal/algae streaks
+    dctx.fillStyle = 'rgba(127,193,201,.22)';
+    for (var sk = 0; sk < 6; sk++){
+      var ky = yStart + ((sk * 71 + c.seed * 17) % Math.max(8, yEnd - yStart - 8));
+      dctx.fillRect(x + 4 + ((sk * 9) % (pw - 8)), ky, 6, 3);
+    }
+    dctx.restore();
+
+    // cap stripe at the opening (teal accent)
+    var capY = (yStart === 0) ? yEnd - 5 : yStart;
+    dctx.fillStyle = '#7fc1c9';
+    dctx.fillRect(x - 3, capY, pw + 6, 5);
+    dctx.fillStyle = 'rgba(255,255,255,.25)';
+    dctx.fillRect(x - 3, capY, pw + 6, 1.5);
+
+    // flowers around the perimeter
+    for (var i = 0; i < flowers.length; i++){
+      var f = flowers[i];
+      var fx = f.side > 0 ? x + pw : x;
+      drawFlower(fx, f.y, f.side, f.type, f.size, f.hue, G.t || 0, f.phase);
+    }
+  }
   // re-init on resize (because dimensions changed)
   window.addEventListener('resize', reset);
 
@@ -777,9 +928,10 @@
     if (G.spawn <= 0){
       var gap = Math.max(120, dH * .38);
       var top = 30 + Math.random() * (dH - gap - 80);
-      G.corals.push({ x: dW + 30, top: top, gap: gap, passed:false });
+      G.corals.push(makeCoral(dW + 30, top, gap));
       G.spawn = 1.5;
     }
+    G.t = (G.t || 0) + dt;
     // move + collisions (only soft — bump out)
     var pw = 36;
     var sp = Math.max(70, dW * .55);
@@ -848,22 +1000,11 @@
     dctx.lineTo(dW, dH);
     dctx.closePath(); dctx.fill();
 
-    // corals
+    // corals (reef pillars with anemones / polyps / sea fans)
     for (var k = 0; k < G.corals.length; k++){
       var c = G.corals[k];
-      var pw = 36;
-      // outer
-      dctx.fillStyle = '#d65a3f';
-      dctx.fillRect(c.x, 0, pw, c.top);
-      dctx.fillRect(c.x, c.top + c.gap, pw, dH - c.top - c.gap);
-      // inner highlight
-      dctx.fillStyle = '#ec8364';
-      dctx.fillRect(c.x + 3, 6, pw - 6, c.top - 8);
-      dctx.fillRect(c.x + 3, c.top + c.gap + 2, pw - 6, dH - c.top - c.gap - 8);
-      // cap
-      dctx.fillStyle = '#7fc1c9';
-      dctx.fillRect(c.x - 2, c.top - 6, pw + 4, 6);
-      dctx.fillRect(c.x - 2, c.top + c.gap, pw + 4, 6);
+      drawPillar(c, 0, c.top, c.flowersTop || []);
+      drawPillar(c, c.top + c.gap, dH, c.flowersBot || []);
     }
 
     // fish
