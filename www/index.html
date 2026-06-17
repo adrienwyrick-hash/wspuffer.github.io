@@ -34,20 +34,42 @@
   #best{position:fixed;top:82px;left:0;right:0;text-align:center;
     font-size:12px;opacity:.6;pointer-events:none;letter-spacing:2px;z-index:4;}
   #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;z-index:2;}
-  .card{background:#0a3a4eee;backdrop-filter:blur(10px);border:1px solid #ffffff1a;
-    border-radius:22px;padding:28px 32px;max-width:320px;text-align:center;
-    box-shadow:0 18px 60px #00000055;}
-  h1{margin:0 0 8px;font-size:30px;
-    text-shadow:0 0 18px rgba(255,184,77,.55),0 0 38px rgba(255,184,77,.28);}
-  p{margin:0 0 18px;opacity:.85;font-size:15px;line-height:1.45;}
-  button{background:#ffb84d;border:0;color:#3a1f00;font-weight:800;
-    padding:14px 32px;border-radius:999px;font-size:16px;cursor:pointer;
-    box-shadow:0 8px 24px #ffb84d55;
+  .card{position:relative;
+    background:linear-gradient(160deg, rgba(14,62,84,.92) 0%, rgba(8,40,58,.92) 100%);
+    backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:28px;padding:30px 30px 26px;max-width:340px;width:100%;text-align:center;
+    box-shadow:0 24px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+    animation:cardIn .55s cubic-bezier(.2,.9,.25,1) both;}
+  .card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,184,77,.35), rgba(255,184,77,0) 35%, rgba(120,200,255,.18) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;padding:1px;opacity:.9;}
+  @keyframes cardIn{
+    0%{opacity:0;transform:translateY(14px) scale(.97);}
+    100%{opacity:1;transform:translateY(0) scale(1);}
+  }
+  h1{margin:0 0 6px;font-size:34px;letter-spacing:.5px;font-weight:900;
+    background:linear-gradient(180deg,#fff5dc 0%,#ffb84d 60%,#ff8a2e 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(255,184,77,.55)) drop-shadow(0 0 28px rgba(255,184,77,.25));}
+  p{margin:0 0 20px;opacity:.82;font-size:14.5px;line-height:1.5;color:#dbeefb;}
+  button{position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#ffd17a 0%,#ffb84d 55%,#ff9a26 100%);
+    border:0;color:#3a1f00;font-weight:900;letter-spacing:.5px;
+    padding:15px 36px;border-radius:999px;font-size:16.5px;cursor:pointer;
+    box-shadow:0 10px 28px rgba(255,154,38,.45),inset 0 1px 0 rgba(255,255,255,.55);
     animation:pulse 1.8s ease-in-out infinite;}
-  button:active{transform:translateY(1px);animation:none;}
+  button::after{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;
+    background:linear-gradient(110deg, transparent 0%, rgba(255,255,255,.55) 50%, transparent 100%);
+    transform:skewX(-20deg);animation:shine 2.6s ease-in-out infinite;}
+  button:active{transform:translateY(1px) scale(.99);animation:none;}
   @keyframes pulse{
-    0%,100%{transform:scale(1);box-shadow:0 8px 24px rgba(255,184,77,.35);}
-    50%{transform:scale(1.05);box-shadow:0 14px 36px rgba(255,184,77,.6);}
+    0%,100%{transform:scale(1);box-shadow:0 10px 28px rgba(255,154,38,.45),inset 0 1px 0 rgba(255,255,255,.55);}
+    50%{transform:scale(1.04);box-shadow:0 16px 40px rgba(255,154,38,.7),inset 0 1px 0 rgba(255,255,255,.6);}
+  }
+  @keyframes shine{
+    0%{left:-60%;} 60%{left:120%;} 100%{left:120%;}
   }
   .hidden{display:none !important;}
   /* Splash screen */
@@ -55,18 +77,43 @@
     transition:opacity .35s ease;}
   #splash.gone{opacity:0;pointer-events:none;}
   #splash canvas{display:block;width:100%;height:100%;}
-  #chars{display:flex;gap:10px;justify-content:center;margin:6px 0 18px;flex-wrap:wrap;}
-  .chip{width:62px;height:62px;border-radius:16px;background:#072030;border:2px solid transparent;
+  #chars{display:flex;gap:10px;justify-content:center;margin:10px 0 20px;flex-wrap:wrap;}
+  .chip{width:64px;height:64px;border-radius:18px;
+    background:linear-gradient(160deg,#0a2a3c 0%,#051824 100%);
+    border:2px solid rgba(255,255,255,.06);
     display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
-    transition:transform .12s,border-color .12s;position:relative;}
+    transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+    position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 12px rgba(0,0,0,.35);}
+  .chip:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.14);}
   .chip canvas{position:static;width:48px !important;height:48px !important;}
-  .chip .lbl{position:absolute;bottom:2px;font-size:9px;opacity:.7;letter-spacing:.5px;}
-  .chip.locked{opacity:.45;cursor:not-allowed;}
+  .chip .lbl{position:absolute;bottom:3px;font-size:9px;opacity:.7;letter-spacing:.5px;}
+  .chip.locked{opacity:.55;cursor:not-allowed;}
+  .chip.locked:hover{transform:none;}
   .chip.locked .lbl{opacity:1;color:#ffd28a;font-weight:700;}
-  .chip.selected{border-color:#ffb84d;transform:translateY(-2px);box-shadow:0 6px 18px #ffb84d33;}
+  .chip.selected{border-color:#ffb84d;transform:translateY(-3px);
+    box-shadow:0 8px 22px rgba(255,184,77,.35),inset 0 1px 0 rgba(255,255,255,.12);
+    background:linear-gradient(160deg,#10384c 0%,#072030 100%);}
   #soundToggle{position:fixed;top:24px;right:18px;background:#0a3a4eaa;border:1px solid #ffffff1a;
     color:#eaf7ff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:18px;
     display:flex;align-items:center;justify-content:center;padding:0;}
+  .card-best{margin-top:14px;font-size:11px;letter-spacing:3px;opacity:.7;color:#cfe9ff;
+    text-transform:uppercase;}
+  .card-best strong{color:#ffd28a;font-weight:800;letter-spacing:1.5px;margin-left:4px;}
+  .card-actions{margin-top:14px;}
+  .card .link{background:transparent;border:0;color:#9bd1eb;font-size:13px;cursor:pointer;
+    padding:6px 10px;font-weight:600;letter-spacing:.3px;
+    box-shadow:none;animation:none;border-radius:8px;}
+  .card .link::after{content:none;}
+  .card .link:active{transform:none;opacity:.7;}
+  .legal{margin-top:8px;font-size:11px;opacity:.55;color:#cfe9ff;letter-spacing:.3px;}
+  .legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
+  .legal .dot{margin:0 6px;opacity:.6;}
+  .toast{position:fixed;left:50%;bottom:38px;transform:translate(-50%,20px);
+    background:#0a3a4eee;border:1px solid #ffffff1a;color:#eaf7ff;
+    padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;
+    box-shadow:0 12px 30px rgba(0,0,0,.45);
+    opacity:0;transition:opacity .25s ease,transform .25s ease;z-index:600;pointer-events:none;}
+  .toast.show{opacity:1;transform:translate(-50%,0);}
   .unlockBanner{background:#ffb84d;color:#3a1f00;padding:8px 14px;border-radius:10px;
     font-weight:800;font-size:14px;margin-bottom:14px;letter-spacing:.5px;}
   /* Paywall + bundle */
@@ -118,8 +165,18 @@
     <p id="sub">Tap to puff up and rise. Stop tapping to shrink back down. Bigger = harder to fit through the coral.</p>
     <div id="chars"></div>
     <button id="btn">Dive in</button>
+    <div id="cardBest" class="card-best hidden"></div>
+    <div class="card-actions">
+      <button id="restoreBtn" class="link" type="button">Restore Purchases</button>
+    </div>
+    <div class="legal">
+      <a id="privacyLink" href="#" rel="noopener">Privacy Policy</a>
+      <span class="dot">·</span>
+      <a id="termsLink" href="#" rel="noopener">Terms of Use</a>
+    </div>
   </div>
 </div>
+<div id="toast" class="toast hidden"></div>
 <div id="purchase" class="hidden">
   <div class="sheet">
     <div class="picon" id="pIcon">🐠</div>
@@ -366,16 +423,19 @@ var SOUND_KEY = 'puff.sound';
 var bestScore = parseInt(localStorage.getItem(BEST_KEY) || '0', 10);
 
 // ---------- Characters ----------
+// productId values must match the IAP products configured in App Store Connect.
 var CHARACTERS = [
   { id: 'puffer',    name: 'Pufferfish', emoji: '🐡', free: true },
-  { id: 'clownfish', name: 'Clownfish',  emoji: '🐠', price: 0.99 },
-  { id: 'octopus',   name: 'Octopus',    emoji: '🐙', price: 0.99 },
-  { id: 'swordfish', name: 'Swordfish',  emoji: '⚔️',  price: 0.99 },
-  { id: 'angelfish', name: 'Angelfish',  emoji: '👼', price: 0.99 }
+  { id: 'clownfish', name: 'Clownfish',  emoji: '🐠', price: 0.99, productId: 'com.wyrickstudios.WSPuffer.clownfish' },
+  { id: 'swordfish', name: 'Swordfish',  emoji: '🐟', price: 0.99, productId: 'com.wyrickstudios.WSPuffer.swordfish' },
+  { id: 'shark',     name: 'Shark',      emoji: '🦈', price: 0.99, productId: 'com.wyrickstudios.WSPuffer.shark' }
 ];
 var OWNED_KEY = 'puff.owned';
 function getOwned() {
   try { return JSON.parse(localStorage.getItem(OWNED_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveOwned(arr) {
+  try { localStorage.setItem(OWNED_KEY, JSON.stringify(arr)); } catch(e) {}
 }
 function ownsChar(id) {
   return getOwned().indexOf(id) !== -1;
@@ -384,6 +444,45 @@ var selectedChar = localStorage.getItem(CHAR_KEY) || 'puffer';
 function isUnlocked(c) {
   if (c.free) return true;
   return ownsChar(c.id);
+}
+
+// ---------- IAP bridge (StoreKit 2 via native plugin) ----------
+function getIAP() {
+  return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.IAP) || null;
+}
+function isNativeIAP() {
+  return !!getIAP() && window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+}
+function charForProductId(pid) {
+  for (var i = 0; i < CHARACTERS.length; i++) {
+    if (CHARACTERS[i].productId === pid) return CHARACTERS[i];
+  }
+  return null;
+}
+var iapProducts = {}; // productId -> { displayPrice, ... }
+function priceLabelFor(c) {
+  var p = c.productId && iapProducts[c.productId];
+  if (p && p.displayPrice) return p.displayPrice;
+  return '$' + (c.price || 0).toFixed(2);
+}
+function loadIAPProducts() {
+  var IAP = getIAP();
+  if (!IAP) return;
+  var ids = [];
+  for (var i = 0; i < CHARACTERS.length; i++) {
+    if (CHARACTERS[i].productId) ids.push(CHARACTERS[i].productId);
+  }
+  if (!ids.length) return;
+  Promise.resolve(IAP.getProducts({ productIds: ids })).then(function(res) {
+    (res.products || []).forEach(function(p) { iapProducts[p.id] = p; });
+    var owned = getOwned();
+    (res.owned || []).forEach(function(pid) {
+      var ch = charForProductId(pid);
+      if (ch && owned.indexOf(ch.id) === -1) owned.push(ch.id);
+    });
+    saveOwned(owned);
+    renderChips();
+  }).catch(function(e) { console.warn('IAP getProducts failed:', e); });
 }
 function findChar(id) {
   for (var i = 0; i < CHARACTERS.length; i++) if (CHARACTERS[i].id === id) return CHARACTERS[i];
@@ -571,7 +670,7 @@ function renderChips() {
     var unlocked = isUnlocked(ch);
     var chip = document.createElement('div');
     chip.className = 'chip' + (unlocked ? '' : ' locked') + (selectedChar === ch.id && unlocked ? ' selected' : '');
-    var label = unlocked ? ch.name.toUpperCase() : ('$' + ch.price.toFixed(2));
+    var label = unlocked ? ch.name.toUpperCase() : priceLabelFor(ch);
     chip.innerHTML = '<div style="font-size:28px;line-height:1">' + ch.emoji + '</div>' +
       '<div class="lbl">' + label + '</div>' +
       (unlocked ? '' : '<div class="lock">🔒</div>');
@@ -595,22 +694,60 @@ function openPurchase(c) {
   pIcon.textContent = c.emoji;
   pTitle.textContent = 'Unlock ' + c.name;
   pSub.textContent = 'Adds ' + c.name + ' as a playable character.';
-  pPrice.textContent = '$' + c.price.toFixed(2);
+  pPrice.textContent = priceLabelFor(c);
   purchaseEl.classList.remove('hidden');
 }
 function closePurchase() {
   purchaseEl.classList.add('hidden');
   pendingPurchase = null;
 }
+function grantPurchase(charId) {
+  var owned = getOwned();
+  if (owned.indexOf(charId) === -1) owned.push(charId);
+  saveOwned(owned);
+  selectedChar = charId;
+  try { localStorage.setItem(CHAR_KEY, charId); } catch(e){}
+  renderChips();
+}
+
 document.getElementById('pBuy').addEventListener('click', function() {
   if (!pendingPurchase) return;
-  var owned = getOwned();
-  if (owned.indexOf(pendingPurchase.id) === -1) owned.push(pendingPurchase.id);
-  try { localStorage.setItem(OWNED_KEY, JSON.stringify(owned)); } catch(e){}
-  selectedChar = pendingPurchase.id;
-  try { localStorage.setItem(CHAR_KEY, pendingPurchase.id); } catch(e){}
-  closePurchase();
-  renderChips();
+  var char = pendingPurchase;
+  var IAP = getIAP();
+  var buyBtn = document.getElementById('pBuy');
+
+  // Dev/web fallback: no native plugin available — just record locally.
+  // On a real device with the IAP plugin, this branch never runs.
+  if (!isNativeIAP() || !char.productId) {
+    grantPurchase(char.id);
+    closePurchase();
+    return;
+  }
+
+  buyBtn.disabled = true;
+  var prevText = buyBtn.textContent;
+  buyBtn.textContent = 'Processing…';
+
+  Promise.resolve(IAP.purchase({ productId: char.productId })).then(function(res) {
+    if (res && res.status === 'purchased') {
+      grantPurchase(char.id);
+      closePurchase();
+      showToast('Thanks! ' + char.name + ' unlocked');
+    } else if (res && res.status === 'cancelled') {
+      // user cancelled — nothing to do
+    } else if (res && res.status === 'pending') {
+      closePurchase();
+      showToast('Purchase pending approval');
+    } else {
+      showToast('Purchase could not complete');
+    }
+  }).catch(function(e) {
+    console.warn('IAP purchase failed:', e);
+    showToast('Purchase failed');
+  }).then(function() {
+    buyBtn.disabled = false;
+    buyBtn.textContent = prevText;
+  });
 });
 document.getElementById('pCancel').addEventListener('click', closePurchase);
 
@@ -623,8 +760,33 @@ function showOverlay(t, s, btnText, newlyUnlocked) {
     unlockBannerEl.classList.add('hidden');
   }
   renderChips();
+  updateCardBest();
   overlay.classList.remove('hidden');
   hud.classList.add('hidden'); bestEl.classList.add('hidden');
+}
+function updateCardBest() {
+  var el = document.getElementById('cardBest');
+  if (!el) return;
+  if (bestScore > 0) {
+    el.innerHTML = 'Best <strong>' + bestScore + '</strong>';
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  // force reflow so transition runs
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(function() {
+    t.classList.remove('show');
+    setTimeout(function() { t.classList.add('hidden'); }, 250);
+  }, 1800);
 }
 function hideOverlay() {
   overlay.classList.add('hidden');
@@ -1370,9 +1532,8 @@ function drawPuffMeter() {
 
 function drawCharacter() {
   if (selectedChar === 'clownfish') return drawClownfish();
-  if (selectedChar === 'angelfish') return drawAngelfish();
-  if (selectedChar === 'octopus')   return drawOctopus();
   if (selectedChar === 'swordfish') return drawSwordfish();
+  if (selectedChar === 'shark')     return drawShark();
   drawFish();
 }
 
@@ -1595,6 +1756,84 @@ function drawSwordfish() {
   });
 }
 
+function drawShark() {
+  withFishTransform(function(r, puffT) {
+    var s = 1 + puffT * 0.35;
+    // body — torpedo with pointier snout
+    var grad = ctx.createLinearGradient(0, -r * s, 0, r * s);
+    grad.addColorStop(0, '#a9b6c2');
+    grad.addColorStop(0.55, '#5d6d7d');
+    grad.addColorStop(1, '#2c3a47');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(r * 1.7 * s, 0);
+    ctx.quadraticCurveTo(r * 1.1 * s, -r * 0.65 * s, 0, -r * 0.7 * s);
+    ctx.quadraticCurveTo(-r * 1.0 * s, -r * 0.55 * s, -r * 1.3 * s, 0);
+    ctx.quadraticCurveTo(-r * 1.0 * s, r * 0.55 * s, 0, r * 0.7 * s);
+    ctx.quadraticCurveTo(r * 1.1 * s, r * 0.65 * s, r * 1.7 * s, 0);
+    ctx.closePath(); ctx.fill();
+    // white belly
+    ctx.fillStyle = 'rgba(240, 244, 248, 0.85)';
+    ctx.beginPath();
+    ctx.moveTo(r * 1.4 * s, r * 0.05);
+    ctx.quadraticCurveTo(r * 0.6 * s, r * 0.6 * s, -r * 1.0 * s, r * 0.18);
+    ctx.quadraticCurveTo(-r * 0.4 * s, r * 0.35 * s, r * 1.4 * s, r * 0.05);
+    ctx.closePath(); ctx.fill();
+    // dorsal fin — classic triangle
+    ctx.fillStyle = '#2c3a47';
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.05 * s, -r * 0.6 * s);
+    ctx.lineTo(r * 0.15 * s, -r * 1.25 * s);
+    ctx.lineTo(r * 0.5 * s, -r * 0.55 * s);
+    ctx.closePath(); ctx.fill();
+    // pectoral fin (lower)
+    ctx.fillStyle = '#3d4d5c';
+    ctx.beginPath();
+    ctx.moveTo(r * 0.2 * s, r * 0.45 * s);
+    ctx.lineTo(r * 0.55 * s, r * 1.1 * s);
+    ctx.lineTo(r * 0.7 * s, r * 0.4 * s);
+    ctx.closePath(); ctx.fill();
+    // tail — crescent
+    ctx.fillStyle = '#2c3a47';
+    ctx.beginPath();
+    ctx.moveTo(-r * 1.2 * s, 0);
+    ctx.lineTo(-r * 2.0 * s, -r * 0.95 * s);
+    ctx.lineTo(-r * 1.55 * s, 0);
+    ctx.lineTo(-r * 2.0 * s, r * 0.75 * s);
+    ctx.closePath(); ctx.fill();
+    // gill slits
+    ctx.strokeStyle = 'rgba(20,30,40,0.55)'; ctx.lineWidth = 1.4;
+    for (var gi = 0; gi < 3; gi++) {
+      var gx = r * (0.55 - gi * 0.1) * s;
+      ctx.beginPath();
+      ctx.moveTo(gx, -r * 0.18);
+      ctx.quadraticCurveTo(gx - 3, 0, gx, r * 0.18);
+      ctx.stroke();
+    }
+    // eye
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.arc(r * 1.05 * s, -r * 0.18 * s, r * 0.12 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0a1424';
+    ctx.beginPath(); ctx.arc(r * 1.08 * s, -r * 0.16 * s, r * 0.07 * s, 0, Math.PI * 2); ctx.fill();
+    // toothy grin
+    ctx.strokeStyle = 'rgba(20,20,25,0.65)'; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(r * 1.55 * s, r * 0.05);
+    ctx.lineTo(r * 1.15 * s, r * 0.22);
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    for (var ti = 0; ti < 4; ti++) {
+      var tx = r * (1.5 - ti * 0.1) * s;
+      var ty = r * (0.07 + ti * 0.035);
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx - 2, ty + 3.5);
+      ctx.lineTo(tx + 2, ty + 3.5);
+      ctx.closePath(); ctx.fill();
+    }
+  });
+}
+
 function drawFish() {
   var r = curRadius();
   var puffT = (fish.puff - 1) / 1.4; // 0..1
@@ -1786,7 +2025,92 @@ function tick(now) {
 }
 initDecor();
 renderChips();
+updateCardBest();
 requestAnimationFrame(tick);
+
+// ---------- App Store compliance: Restore + Legal ----------
+// NOTE: Replace the placeholder URLs with your live Privacy Policy and Terms of Use URLs
+// before submitting to the App Store. Apple requires both for apps with In-App Purchases.
+var PRIVACY_URL = 'https://adrienwyrick-hash.github.io/wspuffer.github.io/PRIVACY_POLICY';
+var TERMS_URL   = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+
+function openExternal(url) {
+  // Capacitor / Cordova path: open in system browser when available
+  try {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+      window.Capacitor.Plugins.Browser.open({ url: url });
+      return;
+    }
+    if (window.cordova && window.cordova.InAppBrowser) {
+      window.cordova.InAppBrowser.open(url, '_system');
+      return;
+    }
+  } catch (e) { /* fall through */ }
+  window.open(url, '_blank');
+}
+
+var restoreBtnEl = document.getElementById('restoreBtn');
+if (restoreBtnEl) {
+  restoreBtnEl.addEventListener('click', function() {
+    var IAP = getIAP();
+    // Dev/web fallback — just re-render and report local state.
+    if (!isNativeIAP()) {
+      renderChips();
+      var c = getOwned().length;
+      showToast(c > 0 ? 'Restored ' + c + ' purchase' + (c === 1 ? '' : 's')
+                      : 'No purchases to restore');
+      return;
+    }
+    restoreBtnEl.disabled = true;
+    var prev = restoreBtnEl.textContent;
+    restoreBtnEl.textContent = 'Restoring…';
+    Promise.resolve(IAP.restore({})).then(function(res) {
+      var owned = getOwned();
+      (res && res.owned || []).forEach(function(pid) {
+        var ch = charForProductId(pid);
+        if (ch && owned.indexOf(ch.id) === -1) owned.push(ch.id);
+      });
+      saveOwned(owned);
+      renderChips();
+      showToast(owned.length > 0
+        ? 'Restored ' + owned.length + ' purchase' + (owned.length === 1 ? '' : 's')
+        : 'No purchases to restore');
+    }).catch(function(e) {
+      console.warn('IAP restore failed:', e);
+      showToast('Restore failed');
+    }).then(function() {
+      restoreBtnEl.disabled = false;
+      restoreBtnEl.textContent = prev;
+    });
+  });
+}
+
+// Load products + entitlements on launch (silent if no native plugin)
+loadIAPProducts();
+// React to interrupted/promoted transactions reported by StoreKit
+if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.IAP) {
+  try {
+    window.Capacitor.Plugins.IAP.addListener('transactionUpdate', function(evt) {
+      var ch = charForProductId(evt && evt.productId);
+      if (!ch) return;
+      var owned = getOwned();
+      if (owned.indexOf(ch.id) === -1) {
+        owned.push(ch.id);
+        saveOwned(owned);
+        renderChips();
+        showToast(ch.name + ' unlocked');
+      }
+    });
+  } catch (e) { /* listener not supported */ }
+}
+var privacyLinkEl = document.getElementById('privacyLink');
+if (privacyLinkEl) {
+  privacyLinkEl.addEventListener('click', function(e) { e.preventDefault(); openExternal(PRIVACY_URL); });
+}
+var termsLinkEl = document.getElementById('termsLink');
+if (termsLinkEl) {
+  termsLinkEl.addEventListener('click', function(e) { e.preventDefault(); openExternal(TERMS_URL); });
+}
 
 // Sound toggle
 var soundToggleEl = document.getElementById('soundToggle');

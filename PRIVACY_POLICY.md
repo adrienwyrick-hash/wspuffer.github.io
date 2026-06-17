@@ -24,5 +24,4 @@ We may update this Privacy Policy from time to time. Continued use of the App af
 
 ## Contact
 
-Questions about this policy: **privacy@wyrickstudios.com**  
-_(replace with your real contact email before submission)_
+Questions about this policy: **adrienwyrick@gmail.com**
