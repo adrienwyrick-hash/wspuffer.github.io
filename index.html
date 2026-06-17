@@ -9,6 +9,8 @@
 <meta property="og:title" content="WSPuffer" />
 <meta property="og:description" content="Tap to puff. Squeeze through coral. Beat your best." />
 <meta property="og:type" content="website" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -37,10 +39,7 @@
   a{color:var(--teal);text-decoration:none;}
   a:hover{opacity:.85;}
 
-  /* Live ocean canvas behind everything */
-  #ocean{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;
-    mix-blend-mode:screen;opacity:.9;}
-  /* sun rays */
+  #ocean{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
   .rays{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
   .rays::before,.rays::after{content:'';position:absolute;top:-10%;width:200%;height:120%;
     background:repeating-linear-gradient(95deg, rgba(255,255,255,0) 0 60px, rgba(255,255,255,.04) 60px 100px);
@@ -48,7 +47,6 @@
   .rays::after{animation-duration:38s;opacity:.6;background:repeating-linear-gradient(80deg, rgba(255,255,255,0) 0 90px, rgba(255,255,255,.025) 90px 140px);}
   @keyframes rays-drift{from{transform:translateX(-5%) skewX(-6deg);} to{transform:translateX(0%) skewX(-6deg);}}
 
-  /* Layout */
   nav{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;
     padding:22px 32px;}
   nav .brand{font-weight:900;letter-spacing:1.4px;font-size:16px;
@@ -63,7 +61,6 @@
 
   main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px;}
 
-  /* HERO */
   .hero{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;
     padding:60px 0 90px;}
   .hero-text{position:relative;}
@@ -91,27 +88,27 @@
   .badge .copy small{font-size:10px;font-weight:500;opacity:.7;letter-spacing:.6px;text-transform:uppercase;}
   .badge .copy strong{font-size:18px;font-weight:700;letter-spacing:.2px;}
   .quiet{color:var(--ink-faint);font-size:13px;}
+  .hint{color:var(--ink-faint);font-size:12px;letter-spacing:.4px;margin-top:14px;
+    display:inline-flex;align-items:center;gap:8px;}
+  .hint .dot{width:6px;height:6px;border-radius:50%;background:var(--gold-2);
+    box-shadow:0 0 10px var(--gold-2);animation:blip 1.6s ease-in-out infinite;}
 
-  /* Phone mockup */
   .phone-wrap{display:flex;justify-content:center;align-items:center;position:relative;}
   .phone{position:relative;width:min(280px,72vw);aspect-ratio:9/19.5;
-    border-radius:46px;background:#000;
-    padding:11px;
+    border-radius:46px;background:#000;padding:11px;
     box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1.5px rgba(255,255,255,.08),
       inset 0 0 0 1.5px rgba(255,255,255,.06);
-    transform:rotate(-2.5deg);
-    animation:phone-float 7s ease-in-out infinite;}
+    transform:rotate(-2.5deg);animation:phone-float 7s ease-in-out infinite;}
   @keyframes phone-float{0%,100%{transform:rotate(-2.5deg) translateY(0);}
     50%{transform:rotate(-2.5deg) translateY(-10px);}}
   .phone::before{content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);
     width:90px;height:24px;border-radius:14px;background:#000;z-index:3;}
   .phone-screen{position:relative;border-radius:36px;height:100%;width:100%;overflow:hidden;
-    background:linear-gradient(180deg,#021522 0%,#062a3a 45%,#0c4660 100%);}
-  .phone-screen svg{position:absolute;inset:0;width:100%;height:100%;}
+    background:linear-gradient(180deg,#0a4d6e 0%,#0e6b8a 55%,#062a3a 100%);}
+  .phone-screen canvas{position:absolute;inset:0;width:100%;height:100%;cursor:pointer;}
   .phone-shine{position:absolute;inset:0;border-radius:36px;pointer-events:none;
-    background:linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 30%);}
+    background:linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 30%);}
 
-  /* Sections */
   section{padding:50px 0;}
   h2.heading{font-size:clamp(26px,3.6vw,38px);font-weight:900;letter-spacing:-.3px;margin:0 0 8px;}
   .sub{color:var(--ink-faint);font-size:14.5px;margin:0 0 30px;letter-spacing:.2px;}
@@ -128,12 +125,10 @@
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
     -webkit-mask-composite:xor;mask-composite:exclude;padding:1px;opacity:.7;}
   .feature .icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;
-    border-radius:12px;background:rgba(255,184,77,.14);color:var(--gold-2);
-    margin-bottom:14px;}
+    border-radius:12px;background:rgba(255,184,77,.14);color:var(--gold-2);margin-bottom:14px;}
   .feature h3{margin:0 0 6px;font-size:17px;font-weight:800;letter-spacing:-.2px;}
   .feature p{margin:0;color:var(--ink-dim);font-size:14px;line-height:1.55;}
 
-  /* Roster */
   .roster{text-align:center;}
   .fish-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:680px;margin:0 auto;}
   .fish{position:relative;padding:18px 12px 14px;border-radius:20px;
@@ -148,23 +143,28 @@
     box-shadow:0 14px 36px rgba(255,184,77,.18),inset 0 1px 0 rgba(255,255,255,.06);}
   .fish.featured .name{color:var(--gold-2);}
 
-  /* Reveal on scroll */
   .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease;}
   .reveal.shown{opacity:1;transform:translateY(0);}
 
   footer{position:relative;z-index:1;padding:50px 24px 60px;margin-top:30px;
     border-top:1px solid var(--line);text-align:center;}
-  footer .row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;font-size:13px;
-    color:var(--ink-dim);}
+  footer .row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--ink-dim);}
   footer .copy{margin-top:18px;color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px;}
 
   @media (max-width:760px){
     .hero{grid-template-columns:1fr;text-align:center;padding:30px 0 50px;}
     .hero .lead{margin-left:auto;margin-right:auto;}
     .cta-row{justify-content:center;}
+    .hint{justify-content:center;}
     nav .links{gap:14px;}
     .phone{transform:rotate(0deg);animation:none;margin:24px auto 0;}
     .fish-row{grid-template-columns:repeat(2,1fr);}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+      transition-duration:.001ms !important;}
+    #ocean,.rays{display:none;}
   }
 </style>
 </head>
@@ -194,78 +194,13 @@
         </a>
         <span class="quiet">Free · iPhone &amp; iPad</span>
       </div>
+      <div class="hint"><span class="dot"></span> Tap the phone to try it</div>
     </div>
 
     <div class="phone-wrap reveal">
       <div class="phone">
         <div class="phone-screen">
-          <svg viewBox="0 0 280 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            <defs>
-              <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#0a4d6e"/>
-                <stop offset=".55" stop-color="#0e6b8a"/>
-                <stop offset="1" stop-color="#062a3a"/>
-              </linearGradient>
-              <radialGradient id="pufBody" cx="35%" cy="35%" r="60%">
-                <stop offset="0" stop-color="#ffe2a0"/>
-                <stop offset=".6" stop-color="#e8943a"/>
-                <stop offset="1" stop-color="#a35515"/>
-              </radialGradient>
-            </defs>
-            <rect width="280" height="600" fill="url(#bg)"/>
-            <!-- sun rays inside screen -->
-            <g opacity=".08" fill="#fff">
-              <polygon points="60,-10 100,-10 140,610 20,610"/>
-              <polygon points="160,-10 200,-10 240,610 120,610"/>
-            </g>
-            <!-- seabed -->
-            <path d="M0 540 Q70 510 140 540 T280 540 V600 H0 Z" fill="#093148" opacity=".7"/>
-            <!-- seaweed -->
-            <g stroke="#1f9e6e" stroke-width="3" fill="none" opacity=".7" stroke-linecap="round">
-              <path d="M30 555 Q40 510 28 470 Q22 440 35 415"/>
-              <path d="M80 555 Q90 520 80 480 Q72 450 85 420"/>
-              <path d="M225 555 Q215 515 230 478 Q240 448 225 418"/>
-            </g>
-            <!-- coral pillars -->
-            <g fill="#d65a3f" opacity=".85">
-              <rect x="195" y="160" width="46" height="160" rx="14"/>
-              <rect x="195" y="360" width="46" height="180" rx="14"/>
-            </g>
-            <g fill="#7fc1c9" opacity=".7">
-              <rect x="201" y="166" width="34" height="148" rx="10"/>
-              <rect x="201" y="366" width="34" height="168" rx="10"/>
-            </g>
-            <!-- bubbles -->
-            <g fill="#cfe9ff" opacity=".5">
-              <circle cx="50" cy="120" r="4"/>
-              <circle cx="92" cy="220" r="6"/>
-              <circle cx="40" cy="320" r="3"/>
-              <circle cx="160" cy="90" r="5"/>
-              <circle cx="170" cy="430" r="4"/>
-            </g>
-            <!-- pufferfish in middle, spikes out -->
-            <g transform="translate(110 300)">
-              <g stroke="#7a2f0a" stroke-width="3" stroke-linecap="round">
-                <line x1="0" y1="-38" x2="0" y2="-58"/>
-                <line x1="27" y1="-27" x2="40" y2="-40"/>
-                <line x1="38" y1="0" x2="58" y2="0"/>
-                <line x1="27" y1="27" x2="40" y2="40"/>
-                <line x1="0" y1="38" x2="0" y2="58"/>
-                <line x1="-27" y1="27" x2="-40" y2="40"/>
-                <line x1="-38" y1="0" x2="-58" y2="0"/>
-                <line x1="-27" y1="-27" x2="-40" y2="-40"/>
-              </g>
-              <polygon points="-30,0 -52,-18 -52,18" fill="#b65a14"/>
-              <circle r="34" fill="url(#pufBody)"/>
-              <ellipse cx="-2" cy="11" rx="18" ry="7" fill="#fff0c8" opacity=".55"/>
-              <circle cx="14" cy="-7" r="6" fill="#fff"/>
-              <circle cx="16" cy="-7" r="3" fill="#1a1a1f"/>
-              <circle cx="17" cy="-9" r="1.2" fill="#fff"/>
-              <path d="M18 6 q5 4 -2 9" stroke="#5a2a08" stroke-width="2" fill="none" stroke-linecap="round"/>
-            </g>
-            <!-- HUD score -->
-            <text x="140" y="58" text-anchor="middle" fill="#eaf7ff" font-family="Inter,sans-serif" font-weight="900" font-size="42" opacity=".95">07</text>
-          </svg>
+          <canvas id="demo" aria-label="Playable WSPuffer demo"></canvas>
         </div>
         <div class="phone-shine"></div>
       </div>
@@ -277,30 +212,22 @@
     <p class="sub reveal">Tight controls, a calm-but-hostile reef, and zero noise.</p>
     <div class="features">
       <div class="feature reveal">
-        <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V6a3 3 0 0 1 6 0v5"/><path d="M5 11h14l-1 9H6z"/></svg>
-        </div>
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V6a3 3 0 0 1 6 0v5"/><path d="M5 11h14l-1 9H6z"/></svg></div>
         <h3>One tap</h3>
         <p>Tap to puff and rise. Let go to shrink and sink. That's the entire control scheme — harder than it sounds.</p>
       </div>
       <div class="feature reveal">
-        <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c4-4 8-4 12 0"/><path d="M3 13c4-4 8-4 12 0"/><path d="M9 5c2-2 6-2 8 0"/></svg>
-        </div>
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c4-4 8-4 12 0"/><path d="M3 13c4-4 8-4 12 0"/><path d="M9 5c2-2 6-2 8 0"/></svg></div>
         <h3>Tight squeezes</h3>
         <p>Coral gaps don't care how puffed up you are. Time your deflation to slip through, then puff again to climb.</p>
       </div>
       <div class="feature reveal">
-        <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/></svg>
-        </div>
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/></svg></div>
         <h3>Beat your best</h3>
         <p>Every run logs your best score. No accounts, no leaderboards, no nag screens — just you versus the reef.</p>
       </div>
       <div class="feature reveal">
-        <div class="icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
-        </div>
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg></div>
         <h3>Quietly polished</h3>
         <p>Hand-animated underwater world with jellies, turtles, seahorses, crabs, and the odd scuba diver going about their day.</p>
       </div>
@@ -384,17 +311,18 @@
 
 <script>
 (function(){
-  // Scroll reveal
+  // ---------- Scroll reveal ----------
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } });
   }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
-  // Live ocean canvas (bubbles + drifting particles)
-  var cv = document.getElementById('ocean');
-  if (!cv) return;
-  var ctx = cv.getContext('2d');
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  // ============================================================
+  // OCEAN: bubbles + creatures (whale, sharks, schools, dolphins)
+  // ============================================================
+  var cv = document.getElementById('ocean'), ctx = cv.getContext('2d');
   var W = 0, H = 0;
   function resize(){
     W = window.innerWidth; H = window.innerHeight;
@@ -402,46 +330,612 @@
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
-  window.addEventListener('resize', resize);
-  resize();
+  window.addEventListener('resize', resize); resize();
 
   var bubbles = [];
-  var COUNT = Math.max(30, Math.floor((W * H) / 22000));
-  function spawn(){ for (var i = 0; i < COUNT; i++) bubbles.push({
-    x: Math.random()*W, y: Math.random()*H,
-    r: 1.5 + Math.random()*4,
-    sp: 12 + Math.random()*40,
-    wob: Math.random()*Math.PI*2,
-    a: .25 + Math.random()*.35
-  }); }
-  spawn();
+  for (var i = 0; i < Math.max(30, Math.floor((W * H) / 22000)); i++){
+    bubbles.push({ x: Math.random()*W, y: Math.random()*H, r: 1.5 + Math.random()*4,
+      sp: 12 + Math.random()*40, wob: Math.random()*Math.PI*2, a: .25 + Math.random()*.35 });
+  }
+
+  // --- Creatures ---
+  function rnd(a,b){ return a + Math.random()*(b-a); }
+
+  function newWhale(){
+    var dir = Math.random() < .5 ? 1 : -1;
+    return { kind:'whale', dir:dir,
+      x: dir>0 ? -360 : W+360,
+      y: rnd(H*.55, H*.8),
+      vx: dir * rnd(14, 22),
+      scale: rnd(1.0, 1.4), tailPh: rnd(0,Math.PI*2),
+      alpha:.18 };
+  }
+  function newShark(){
+    var dir = Math.random() < .5 ? 1 : -1;
+    return { kind:'shark', dir:dir,
+      x: dir>0 ? -200 : W+200,
+      y: rnd(H*.25, H*.65),
+      vx: dir * rnd(45, 70),
+      baseVx: 0, // saved when chasing
+      scale: rnd(.75, 1.05), tailPh: rnd(0,Math.PI*2),
+      chasing: null, // school ref
+      alpha:.32 };
+  }
+  function newDolphin(){
+    var dir = Math.random() < .5 ? 1 : -1;
+    return { kind:'dolphin', dir:dir,
+      x: dir>0 ? -160 : W+160,
+      y0: rnd(H*.35, H*.6),
+      arcCenter: rnd(H*.35, H*.6),
+      arcAmp: rnd(60, 120),
+      arcPh: 0,
+      vx: dir * rnd(140, 200),
+      scale: rnd(.55, .8), tailPh: rnd(0,Math.PI*2),
+      alpha:.42 };
+  }
+  function newSchool(){
+    var dir = Math.random() < .5 ? 1 : -1;
+    var n = 10 + Math.floor(Math.random()*8);
+    var fish = [];
+    for (var i = 0; i < n; i++) fish.push({
+      ox: rnd(-60,60), oy: rnd(-25,25),
+      px: 0, py: 0,
+      vx: 0, vy: 0,
+      flap: Math.random()*Math.PI*2
+    });
+    return { kind:'school', dir:dir,
+      x: dir>0 ? -160 : W+160,
+      y: rnd(H*.25, H*.7),
+      vx: dir * rnd(28, 42),
+      vy: 0,
+      fish: fish, panic: 0,
+      hue: rnd(35, 60), // golden-orange schools
+      scale: rnd(.9, 1.1),
+      alpha:.55 };
+  }
+
+  var creatures = [];
+  creatures.push(newWhale());
+  creatures.push(newShark()); creatures.push(newShark());
+  creatures.push(newDolphin());
+  creatures.push(newSchool()); creatures.push(newSchool()); creatures.push(newSchool());
+
+  function offscreen(c){
+    var mx = (c.kind === 'whale' ? 400 : 200);
+    return (c.dir > 0 && c.x > W + mx) || (c.dir < 0 && c.x < -mx);
+  }
+  function respawn(c){
+    if (c.kind === 'whale') return newWhale();
+    if (c.kind === 'shark') return newShark();
+    if (c.kind === 'dolphin') return newDolphin();
+    return newSchool();
+  }
+
+  // --- Drawing helpers ---
+  function drawWhale(c){
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    if (c.dir < 0) ctx.scale(-1,1);
+    ctx.globalAlpha = c.alpha;
+    var s = c.scale * 100;
+    // body
+    var grad = ctx.createLinearGradient(0,-s*.45, 0, s*.45);
+    grad.addColorStop(0, '#2a4a66');
+    grad.addColorStop(.5, '#1a3550');
+    grad.addColorStop(1, '#0b1f33');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(s*1.5, 0);
+    ctx.quadraticCurveTo(s*1.2, -s*.55, s*.2, -s*.55);
+    ctx.quadraticCurveTo(-s*.9, -s*.45, -s*1.4, -s*.18);
+    ctx.lineTo(-s*1.4, s*.18);
+    ctx.quadraticCurveTo(-s*.9, s*.45, s*.2, s*.55);
+    ctx.quadraticCurveTo(s*1.2, s*.55, s*1.5, 0);
+    ctx.closePath();
+    ctx.fill();
+    // belly highlight
+    ctx.fillStyle = 'rgba(255,255,255,.06)';
+    ctx.beginPath();
+    ctx.ellipse(0, s*.3, s*1.0, s*.18, 0, 0, Math.PI*2); ctx.fill();
+    // tail (with wag)
+    var tailWag = Math.sin(c.tailPh) * .2;
+    ctx.save();
+    ctx.translate(-s*1.4, 0);
+    ctx.rotate(tailWag);
+    ctx.fillStyle = '#0b1f33';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-s*.45, -s*.55);
+    ctx.lineTo(-s*.2, 0);
+    ctx.lineTo(-s*.45, s*.55);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    // dorsal fin
+    ctx.fillStyle = '#0b1f33';
+    ctx.beginPath();
+    ctx.moveTo(-s*.1, -s*.5);
+    ctx.lineTo(s*.2, -s*.85);
+    ctx.lineTo(s*.4, -s*.5);
+    ctx.closePath(); ctx.fill();
+    // pectoral
+    ctx.beginPath();
+    ctx.moveTo(s*.5, s*.4);
+    ctx.lineTo(s*.85, s*.85);
+    ctx.lineTo(s*.95, s*.45);
+    ctx.closePath(); ctx.fill();
+    // eye
+    ctx.fillStyle = 'rgba(255,255,255,.5)';
+    ctx.beginPath(); ctx.arc(s*1.05, -s*.1, s*.04, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawShark(c){
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    if (c.dir < 0) ctx.scale(-1,1);
+    ctx.globalAlpha = c.alpha;
+    var s = c.scale * 50;
+    var grad = ctx.createLinearGradient(0,-s*.7,0,s*.7);
+    grad.addColorStop(0, '#7d8a96');
+    grad.addColorStop(.55, '#3d4a59');
+    grad.addColorStop(1, '#1a2330');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(s*1.7, 0);
+    ctx.quadraticCurveTo(s*1.1, -s*.65, 0, -s*.7);
+    ctx.quadraticCurveTo(-s*1.0, -s*.55, -s*1.3, 0);
+    ctx.quadraticCurveTo(-s*1.0, s*.55, 0, s*.7);
+    ctx.quadraticCurveTo(s*1.1, s*.65, s*1.7, 0);
+    ctx.closePath(); ctx.fill();
+    // belly
+    ctx.fillStyle = 'rgba(240,244,248,.6)';
+    ctx.beginPath();
+    ctx.moveTo(s*1.4, s*.05);
+    ctx.quadraticCurveTo(s*.6, s*.6, -s*1.0, s*.18);
+    ctx.quadraticCurveTo(-s*.4, s*.35, s*1.4, s*.05);
+    ctx.closePath(); ctx.fill();
+    // dorsal
+    ctx.fillStyle = '#1a2330';
+    ctx.beginPath();
+    ctx.moveTo(-s*.05, -s*.6);
+    ctx.lineTo(s*.15, -s*1.25);
+    ctx.lineTo(s*.5, -s*.55);
+    ctx.closePath(); ctx.fill();
+    // pectoral
+    ctx.beginPath();
+    ctx.moveTo(s*.2, s*.45);
+    ctx.lineTo(s*.55, s*1.1);
+    ctx.lineTo(s*.7, s*.4);
+    ctx.closePath(); ctx.fill();
+    // tail
+    var tailWag = Math.sin(c.tailPh) * .25;
+    ctx.save();
+    ctx.translate(-s*1.2, 0);
+    ctx.rotate(tailWag);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-s*.8, -s*.95);
+    ctx.lineTo(-s*.35, 0);
+    ctx.lineTo(-s*.8, s*.75);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    // eye
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(s*1.05, -s*.18, s*.07, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#0a1424';
+    ctx.beginPath(); ctx.arc(s*1.08, -s*.16, s*.04, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawDolphin(c){
+    ctx.save();
+    ctx.translate(c.x, c.y0);
+    if (c.dir < 0) ctx.scale(-1,1);
+    ctx.globalAlpha = c.alpha;
+    var s = c.scale * 40;
+    var grad = ctx.createLinearGradient(0,-s*.55,0,s*.55);
+    grad.addColorStop(0, '#94aec3');
+    grad.addColorStop(.55, '#3f5b75');
+    grad.addColorStop(1, '#1c2c41');
+    ctx.fillStyle = grad;
+    // sleek body
+    ctx.beginPath();
+    ctx.moveTo(s*1.6, 0);
+    ctx.quadraticCurveTo(s*1.0, -s*.5, 0, -s*.55);
+    ctx.quadraticCurveTo(-s*.9, -s*.3, -s*1.3, 0);
+    ctx.quadraticCurveTo(-s*.9, s*.3, 0, s*.55);
+    ctx.quadraticCurveTo(s*1.0, s*.5, s*1.6, 0);
+    ctx.closePath(); ctx.fill();
+    // belly
+    ctx.fillStyle = 'rgba(240,244,248,.55)';
+    ctx.beginPath();
+    ctx.moveTo(s*1.3, s*.0);
+    ctx.quadraticCurveTo(s*.5, s*.45, -s*.9, s*.2);
+    ctx.quadraticCurveTo(-s*.3, s*.3, s*1.3, s*.0);
+    ctx.closePath(); ctx.fill();
+    // dorsal — curved/hooked
+    ctx.fillStyle = '#1c2c41';
+    ctx.beginPath();
+    ctx.moveTo(s*.0, -s*.45);
+    ctx.quadraticCurveTo(s*.15, -s*1.0, s*.45, -s*.55);
+    ctx.lineTo(s*.55, -s*.45);
+    ctx.closePath(); ctx.fill();
+    // beak/nose
+    ctx.fillStyle = '#3f5b75';
+    ctx.beginPath();
+    ctx.moveTo(s*1.3, -s*.05);
+    ctx.lineTo(s*1.85, 0);
+    ctx.lineTo(s*1.3, s*.1);
+    ctx.closePath(); ctx.fill();
+    // tail
+    var tailWag = Math.sin(c.tailPh) * .35;
+    ctx.save();
+    ctx.translate(-s*1.2, 0);
+    ctx.rotate(tailWag);
+    ctx.fillStyle = '#1c2c41';
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(-s*.55,-s*.55);
+    ctx.lineTo(-s*.2,0);
+    ctx.lineTo(-s*.55,s*.55);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    // eye
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(s*.95, -s*.15, s*.06, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#0a1424';
+    ctx.beginPath(); ctx.arc(s*.97, -s*.13, s*.035, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawSchool(c, dt){
+    var hueA = 'hsla(' + c.hue + ', 85%, 65%, ' + c.alpha + ')';
+    var hueB = 'hsla(' + (c.hue - 8) + ', 80%, 45%, ' + (c.alpha*.9) + ')';
+    for (var i = 0; i < c.fish.length; i++){
+      var f = c.fish[i];
+      // settle to formation, perturbed if panicked
+      var targetX = c.x + f.ox + (c.panic > 0 ? Math.sin(f.flap*2)*40 : 0);
+      var targetY = c.y + f.oy + (c.panic > 0 ? Math.cos(f.flap*1.7)*30 : 0);
+      f.px += (targetX - f.px) * Math.min(1, dt * 4);
+      f.py += (targetY - f.py) * Math.min(1, dt * 4);
+      f.flap += dt * 8;
+
+      var s = 6 * c.scale;
+      ctx.save();
+      ctx.translate(f.px, f.py);
+      if (c.dir < 0) ctx.scale(-1,1);
+      ctx.rotate(Math.sin(f.flap) * .15);
+      // tail
+      ctx.fillStyle = hueB;
+      ctx.beginPath();
+      ctx.moveTo(-s*.6, 0);
+      ctx.lineTo(-s*1.4, -s*.7);
+      ctx.lineTo(-s*1.0, 0);
+      ctx.lineTo(-s*1.4, s*.7);
+      ctx.closePath(); ctx.fill();
+      // body
+      ctx.fillStyle = hueA;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, s, s*.55, 0, 0, Math.PI*2); ctx.fill();
+      // dot eye
+      ctx.fillStyle = 'rgba(20,20,30,.7)';
+      ctx.beginPath(); ctx.arc(s*.5, -s*.1, s*.12, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function updateAndDraw(dt, now){
+    ctx.clearRect(0, 0, W, H);
+
+    // soft top glow
+    var topGlow = ctx.createRadialGradient(W*.5, -40, 40, W*.5, -40, Math.max(W,H)*.8);
+    topGlow.addColorStop(0, 'rgba(120,200,255,.10)');
+    topGlow.addColorStop(1, 'rgba(120,200,255,0)');
+    ctx.fillStyle = topGlow; ctx.fillRect(0, 0, W, H);
+
+    // --- chase logic: each shark eyes nearest school in front of it ---
+    var sharks = creatures.filter(function(c){ return c.kind === 'shark'; });
+    var schools = creatures.filter(function(c){ return c.kind === 'school'; });
+    sharks.forEach(function(sh){
+      var best = null, bestD = 1e9;
+      schools.forEach(function(sc){
+        if (sc.dir !== sh.dir) return; // same direction so the chase makes sense
+        var dx = sc.x - sh.x;
+        if (sh.dir > 0 ? dx < 0 : dx > 0) return; // school must be ahead
+        var dy = sc.y - sh.y;
+        var d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 360 && d < bestD) { bestD = d; best = sc; }
+      });
+      sh.chasing = best;
+      if (best){
+        // accelerate + slight Y homing
+        var spdBoost = 1.45;
+        sh.vx = sh.dir * Math.abs(sh.vx) * (1 + (spdBoost - 1) * Math.min(1, (360 - bestD) / 360) * .35);
+        var dy = best.y - sh.y;
+        sh.y += dy * Math.min(1, dt * 1.2);
+        best.panic = Math.max(best.panic, 1.0);
+        // school flees a bit faster + jitters
+        best.vx = best.dir * Math.max(Math.abs(best.vx), 70);
+        best.vy = (best.y > sh.y ? 1 : -1) * 18;
+      }
+    });
+
+    // --- update positions ---
+    creatures.forEach(function(c){
+      if (c.kind === 'dolphin'){
+        c.arcPh += dt * 2.2;
+        c.x += c.vx * dt;
+        c.y0 = c.arcCenter + Math.sin(c.arcPh) * c.arcAmp;
+        c.tailPh += dt * 16;
+      } else if (c.kind === 'school'){
+        c.x += c.vx * dt;
+        c.y += (c.vy || 0) * dt;
+        c.vy *= Math.pow(0.6, dt); // damp
+        c.panic = Math.max(0, c.panic - dt * .6);
+      } else {
+        c.x += c.vx * dt;
+        c.y += (c.vy || 0) * dt;
+        c.tailPh += dt * (c.kind === 'whale' ? 1.5 : 6);
+      }
+    });
+
+    // --- replace off-screen ---
+    for (var i = 0; i < creatures.length; i++){
+      if (offscreen(creatures[i])) creatures[i] = respawn(creatures[i]);
+    }
+
+    // --- draw back-to-front (whale deepest) ---
+    var order = ['whale','school','shark','dolphin'];
+    order.forEach(function(kind){
+      creatures.filter(function(c){ return c.kind === kind; }).forEach(function(c){
+        if (kind === 'whale')   drawWhale(c);
+        if (kind === 'shark')   drawShark(c);
+        if (kind === 'dolphin') drawDolphin(c);
+        if (kind === 'school')  drawSchool(c, dt);
+      });
+    });
+
+    // bubbles last so they sparkle over silhouettes
+    for (var b = 0; b < bubbles.length; b++){
+      var bb = bubbles[b];
+      bb.y -= bb.sp * dt;
+      bb.x += Math.sin(now * .001 + bb.wob) * 6 * dt;
+      if (bb.y < -10) { bb.y = H + 10; bb.x = Math.random() * W; }
+      var bg = ctx.createRadialGradient(bb.x - bb.r*.3, bb.y - bb.r*.3, bb.r*.1, bb.x, bb.y, bb.r);
+      bg.addColorStop(0, 'rgba(255,255,255,' + (bb.a * .9) + ')');
+      bg.addColorStop(.7, 'rgba(255,255,255,' + (bb.a * .25) + ')');
+      bg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = bg;
+      ctx.beginPath(); ctx.arc(bb.x, bb.y, bb.r, 0, Math.PI*2); ctx.fill();
+    }
+  }
 
   var last = 0;
   function tick(now){
     var dt = Math.min(.033, (now - last) / 1000);
     last = now;
-    ctx.clearRect(0, 0, W, H);
-    // soft top glow
-    var g = ctx.createRadialGradient(W*.5, -40, 40, W*.5, -40, Math.max(W,H)*.8);
-    g.addColorStop(0, 'rgba(120,200,255,.10)');
-    g.addColorStop(1, 'rgba(120,200,255,0)');
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-
-    for (var i = 0; i < bubbles.length; i++){
-      var b = bubbles[i];
-      b.y -= b.sp * dt;
-      b.x += Math.sin(now * .001 + b.wob) * 6 * dt;
-      if (b.y < -10) { b.y = H + 10; b.x = Math.random() * W; }
-      var grad = ctx.createRadialGradient(b.x - b.r*.3, b.y - b.r*.3, b.r*.1, b.x, b.y, b.r);
-      grad.addColorStop(0, 'rgba(255,255,255,' + (b.a * .9) + ')');
-      grad.addColorStop(.7, 'rgba(255,255,255,' + (b.a * .25) + ')');
-      grad.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
-    }
+    updateAndDraw(dt, now);
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+
+  // ============================================================
+  // PHONE DEMO: stripped-down playable WSPuffer in the mockup
+  // ============================================================
+  var demoCv = document.getElementById('demo');
+  if (!demoCv) return;
+  var dctx = demoCv.getContext('2d');
+  var dW = 0, dH = 0;
+  function dResize(){
+    var r = demoCv.getBoundingClientRect();
+    dW = r.width; dH = r.height;
+    demoCv.width = Math.floor(dW * DPR);
+    demoCv.height = Math.floor(dH * DPR);
+    dctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  dResize();
+  window.addEventListener('resize', dResize);
+
+  var G = {
+    fish:  { x: 0, y: 0, vy: 0, puff: 1, wob: 0 },
+    corals: [],
+    score: 0,
+    spawn: 0
+  };
+  function reset(){
+    G.fish.x = dW * .28;
+    G.fish.y = dH * .5;
+    G.fish.vy = 0; G.fish.puff = 1; G.fish.wob = 0;
+    G.corals = []; G.score = 0; G.spawn = .9;
+  }
+  reset();
+  // re-init on resize (because dimensions changed)
+  window.addEventListener('resize', reset);
+
+  function puffDemo(){
+    G.fish.vy = -dH * .017;
+    G.fish.puff = Math.min(2.2, G.fish.puff + .28);
+  }
+  demoCv.addEventListener('click', puffDemo);
+  demoCv.addEventListener('touchstart', function(e){ e.preventDefault(); puffDemo(); }, { passive:false });
+
+  function curR(){ return Math.max(7, Math.min(dW, dH) * .035) * G.fish.puff; }
+
+  function dUpdate(dt){
+    // physics
+    G.fish.puff = Math.max(1, G.fish.puff - dt * 1.8);
+    G.fish.vy += dH * .0014 * dt * 60;
+    G.fish.y  += G.fish.vy * dt * 60;
+    G.fish.wob += dt * 6;
+
+    // soft bounds (no game over — landing page demo)
+    if (G.fish.y > dH - 18) { G.fish.y = dH - 18; G.fish.vy *= -.3; }
+    if (G.fish.y < 18)      { G.fish.y = 18;      G.fish.vy = Math.abs(G.fish.vy) * .3; }
+
+    // spawn corals
+    G.spawn -= dt;
+    if (G.spawn <= 0){
+      var gap = Math.max(120, dH * .38);
+      var top = 30 + Math.random() * (dH - gap - 80);
+      G.corals.push({ x: dW + 30, top: top, gap: gap, passed:false });
+      G.spawn = 1.5;
+    }
+    // move + collisions (only soft — bump out)
+    var pw = 36;
+    var sp = Math.max(70, dW * .55);
+    for (var i = 0; i < G.corals.length; i++){
+      var c = G.corals[i];
+      c.x -= sp * dt;
+      if (!c.passed && c.x + pw < G.fish.x){ c.passed = true; G.score++; }
+      var r = curR();
+      var hitX = (G.fish.x + r*.85 > c.x) && (G.fish.x - r*.85 < c.x + pw);
+      if (hitX){
+        if (G.fish.y - r*.85 < c.top)            G.fish.y = c.top + r*.85, G.fish.vy = Math.abs(G.fish.vy)*.3;
+        if (G.fish.y + r*.85 > c.top + c.gap)    G.fish.y = c.top + c.gap - r*.85, G.fish.vy = -Math.abs(G.fish.vy)*.3;
+      }
+    }
+    while (G.corals.length && G.corals[0].x < -50) G.corals.shift();
+
+    // ---- tiny AI nudge so it plays itself when nobody taps ----
+    G.aiCool = (G.aiCool || 0) - dt;
+    if (G.aiCool <= 0){
+      var next = null;
+      for (var j = 0; j < G.corals.length; j++){
+        if (G.corals[j].x + pw > G.fish.x - 10) { next = G.corals[j]; break; }
+      }
+      if (next){
+        var gapCenter = next.top + next.gap * .42;
+        if (G.fish.y > gapCenter + 18){
+          puffDemo();
+          G.aiCool = .18 + Math.random() * .12;
+        } else {
+          G.aiCool = .08;
+        }
+      } else {
+        G.aiCool = .15;
+      }
+    }
+  }
+
+  function dDraw(){
+    // background
+    var g = dctx.createLinearGradient(0, 0, 0, dH);
+    g.addColorStop(0, '#0a4d6e');
+    g.addColorStop(.55, '#0e6b8a');
+    g.addColorStop(1, '#062a3a');
+    dctx.fillStyle = g; dctx.fillRect(0, 0, dW, dH);
+
+    // sun rays
+    dctx.save();
+    dctx.globalAlpha = .08;
+    dctx.fillStyle = '#fff';
+    for (var i = 0; i < 4; i++){
+      var x = (i + 1) * (dW / 5);
+      dctx.beginPath();
+      dctx.moveTo(x - 18, 0); dctx.lineTo(x + 18, 0);
+      dctx.lineTo(x + 60, dH); dctx.lineTo(x - 60, dH);
+      dctx.closePath(); dctx.fill();
+    }
+    dctx.restore();
+
+    // sea floor
+    dctx.fillStyle = '#093148';
+    dctx.beginPath();
+    dctx.moveTo(0, dH);
+    for (var sx = 0; sx <= dW; sx += 12){
+      dctx.lineTo(sx, dH - 14 - Math.sin(sx*.05) * 4);
+    }
+    dctx.lineTo(dW, dH);
+    dctx.closePath(); dctx.fill();
+
+    // corals
+    for (var k = 0; k < G.corals.length; k++){
+      var c = G.corals[k];
+      var pw = 36;
+      // outer
+      dctx.fillStyle = '#d65a3f';
+      dctx.fillRect(c.x, 0, pw, c.top);
+      dctx.fillRect(c.x, c.top + c.gap, pw, dH - c.top - c.gap);
+      // inner highlight
+      dctx.fillStyle = '#ec8364';
+      dctx.fillRect(c.x + 3, 6, pw - 6, c.top - 8);
+      dctx.fillRect(c.x + 3, c.top + c.gap + 2, pw - 6, dH - c.top - c.gap - 8);
+      // cap
+      dctx.fillStyle = '#7fc1c9';
+      dctx.fillRect(c.x - 2, c.top - 6, pw + 4, 6);
+      dctx.fillRect(c.x - 2, c.top + c.gap, pw + 4, 6);
+    }
+
+    // fish
+    var r = curR();
+    var puffT = (G.fish.puff - 1) / 1.2;
+    dctx.save();
+    dctx.translate(G.fish.x, G.fish.y);
+    var tilt = Math.max(-.45, Math.min(.9, G.fish.vy * .055));
+    dctx.rotate(tilt);
+    // spikes (longer when puffed)
+    var spikeLen = r * (.18 + puffT * 1.1);
+    if (spikeLen > 1){
+      dctx.strokeStyle = puffT > .5 ? '#7a2f0a' : '#a85518';
+      dctx.lineWidth = Math.max(1.4, r * .08);
+      dctx.lineCap = 'round';
+      for (var sp = 0; sp < 14; sp++){
+        var a = (sp / 14) * Math.PI * 2;
+        dctx.beginPath();
+        dctx.moveTo(Math.cos(a) * r*.92, Math.sin(a) * r*.92);
+        dctx.lineTo(Math.cos(a) * (r + spikeLen), Math.sin(a) * (r + spikeLen));
+        dctx.stroke();
+      }
+    }
+    // tail
+    dctx.fillStyle = '#b65a14';
+    dctx.beginPath();
+    dctx.moveTo(-r*.85, 0);
+    dctx.lineTo(-r*1.55, -r*.55);
+    dctx.lineTo(-r*1.55, r*.55);
+    dctx.closePath(); dctx.fill();
+    // body
+    var bg2 = dctx.createRadialGradient(-r*.25, -r*.3, r*.2, 0, 0, r);
+    bg2.addColorStop(0, '#ffe2a0');
+    bg2.addColorStop(.6, '#e8943a');
+    bg2.addColorStop(1, '#a35515');
+    dctx.fillStyle = bg2;
+    dctx.beginPath(); dctx.arc(0, 0, r, 0, Math.PI*2); dctx.fill();
+    // belly
+    dctx.fillStyle = 'rgba(255,240,200,.5)';
+    dctx.beginPath(); dctx.ellipse(-r*.05, r*.35, r*.55, r*.25, 0, 0, Math.PI*2); dctx.fill();
+    // eye
+    dctx.fillStyle = '#fff';
+    dctx.beginPath(); dctx.arc(r*.42, -r*.22, r*.22, 0, Math.PI*2); dctx.fill();
+    dctx.fillStyle = '#1a1a1f';
+    dctx.beginPath(); dctx.arc(r*.48, -r*.22, r*.12, 0, Math.PI*2); dctx.fill();
+    // mouth
+    dctx.strokeStyle = '#5a2a08';
+    dctx.lineWidth = Math.max(1, r * .06);
+    dctx.beginPath(); dctx.arc(r*.55, r*.18, r*.13, -.3, .7); dctx.stroke();
+    dctx.restore();
+
+    // HUD score
+    dctx.save();
+    dctx.font = '900 ' + Math.round(dW * .14) + 'px Inter, sans-serif';
+    dctx.textAlign = 'center';
+    dctx.textBaseline = 'top';
+    dctx.shadowColor = 'rgba(0,0,0,.55)'; dctx.shadowBlur = 8;
+    dctx.fillStyle = '#eaf7ff';
+    var scoreStr = G.score < 10 ? '0' + G.score : String(G.score);
+    dctx.fillText(scoreStr, dW / 2, dH * .05);
+    dctx.restore();
+  }
+
+  var dLast = 0;
+  function dTick(now){
+    var dt = Math.min(.033, (now - dLast) / 1000);
+    dLast = now;
+    dUpdate(dt);
+    dDraw();
+    requestAnimationFrame(dTick);
+  }
+  requestAnimationFrame(dTick);
 })();
 </script>
 </body>
