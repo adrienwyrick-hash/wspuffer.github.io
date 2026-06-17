@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2732" height="2732" viewBox="0 0 2732 2732">
+  <defs>
+    <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a4d6e"/>
+      <stop offset="55%" stop-color="#0e6b8a"/>
+      <stop offset="100%" stop-color="#062a3a"/>
+    </linearGradient>
+    <linearGradient id="ray" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="body" cx="38%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#ffe7b3"/>
+      <stop offset="55%" stop-color="#f5a13c"/>
+      <stop offset="100%" stop-color="#9a4f15"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffb84d" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffb84d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="2732" height="2732" fill="url(#ocean)"/>
+
+  <!-- sun rays -->
+  <g opacity="0.55">
+    <polygon points="380,0 540,0 700,2732 220,2732" fill="url(#ray)"/>
+    <polygon points="940,0 1100,0 1260,2732 780,2732" fill="url(#ray)"/>
+    <polygon points="1500,0 1660,0 1820,2732 1340,2732" fill="url(#ray)"/>
+    <polygon points="2060,0 2220,0 2380,2732 1900,2732" fill="url(#ray)"/>
+  </g>
+
+  <!-- bubbles -->
+  <g fill="#ffffff" opacity="0.18">
+    <circle cx="280" cy="1900" r="22"/>
+    <circle cx="2200" cy="500"  r="32"/>
+    <circle cx="2440" cy="1700" r="18"/>
+    <circle cx="180"  cy="820"  r="26"/>
+    <circle cx="460"  cy="320"  r="14"/>
+    <circle cx="1980" cy="2180" r="20"/>
+    <circle cx="700"  cy="2300" r="16"/>
+    <circle cx="2520" cy="1100" r="24"/>
+  </g>
+  <g stroke="#ffffff" stroke-width="3" fill="none" opacity="0.28">
+    <circle cx="280" cy="1900" r="22"/>
+    <circle cx="2200" cy="500"  r="32"/>
+    <circle cx="2440" cy="1700" r="18"/>
+    <circle cx="180"  cy="820"  r="26"/>
+    <circle cx="460"  cy="320"  r="14"/>
+    <circle cx="1980" cy="2180" r="20"/>
+    <circle cx="700"  cy="2300" r="16"/>
+    <circle cx="2520" cy="1100" r="24"/>
+  </g>
+
+  <!-- glow behind fish -->
+  <circle cx="1366" cy="1366" r="900" fill="url(#glow)"/>
+
+  <!-- spikes -->
+  <g transform="translate(1366 1366)" fill="#7a2f0a">
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(0)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(22.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(45)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(67.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(90)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(112.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(135)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(157.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(180)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(202.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(225)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(247.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(270)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(292.5)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(315)"/>
+    <polygon points="0,-560 22,-470 -22,-470" transform="rotate(337.5)"/>
+  </g>
+
+  <!-- tail -->
+  <g transform="translate(1366 1366)">
+    <path d="M -420,0 L -580,-200 L -520,0 L -580,200 Z" fill="#c8631e"/>
+  </g>
+
+  <!-- fins -->
+  <g transform="translate(1366 1366)">
+    <ellipse cx="-60" cy="360" rx="160" ry="68" transform="rotate(15)" fill="#d97326"/>
+    <ellipse cx="-60" cy="-360" rx="160" ry="68" transform="rotate(-15)" fill="#d97326"/>
+  </g>
+
+  <!-- body -->
+  <circle cx="1366" cy="1366" r="460" fill="url(#body)"/>
+
+  <!-- belly -->
+  <ellipse cx="1366" cy="1500" rx="330" ry="200" fill="#fff5d2" opacity="0.55"/>
+
+  <!-- sheen -->
+  <ellipse cx="1230" cy="1180" rx="210" ry="76" transform="rotate(-18 1230 1180)" fill="#ffffff" opacity="0.22"/>
+
+  <!-- dots -->
+  <g fill="#78370f" opacity="0.5">
+    <circle cx="1410" cy="1340" r="18"/>
+    <circle cx="1510" cy="1450" r="18"/>
+    <circle cx="1280" cy="1500" r="18"/>
+    <circle cx="1190" cy="1320" r="18"/>
+    <circle cx="1400" cy="1610" r="18"/>
+  </g>
+
+  <!-- eye -->
+  <circle cx="1570" cy="1240" r="110" fill="#ffffff"/>
+  <circle cx="1605" cy="1255" r="62" fill="#0a1424"/>
+  <circle cx="1625" cy="1230" r="22" fill="#ffffff"/>
+
+  <!-- mouth -->
+  <ellipse cx="1800" cy="1410" rx="42" ry="52" fill="#3a1a05"/>
+
+  <!-- blush -->
+  <ellipse cx="1670" cy="1490" rx="78" ry="42" fill="#ff5050" opacity="0.4"/>
+
+  <!-- title -->
+  <text x="1366" y="2350" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Helvetica" font-weight="800" font-size="140" fill="#ffffff" letter-spacing="6">WSPUFFER</text>
+</svg>

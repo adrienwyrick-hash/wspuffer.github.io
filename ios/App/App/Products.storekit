@@ -1,0 +1,62 @@
+{
+  "identifier" : "C82A8CB7-8BD5-45F6-9E7C-EA97DB99215E",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "7B94247D-3B35-4CC3-80E1-34D355B1889F",
+      "localizations" : [
+        {
+          "description" : "Adds Clownfish as a playable character.",
+          "displayName" : "Clownfish",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.wyrickstudios.WSPuffer.clownfish",
+      "referenceName" : "Clownfish",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "65B18EFE-3294-4D31-9784-61277A4C364C",
+      "localizations" : [
+        {
+          "description" : "Adds Swordfish as a playable character.",
+          "displayName" : "Swordfish",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.wyrickstudios.WSPuffer.swordfish",
+      "referenceName" : "Swordfish",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "229AA680-B4AC-46D1-B49E-25D3F3A0CACF",
+      "localizations" : [
+        {
+          "description" : "Adds Shark as a playable character.",
+          "displayName" : "Shark",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.wyrickstudios.WSPuffer.shark",
+      "referenceName" : "Shark",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

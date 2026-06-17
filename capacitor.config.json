@@ -1,0 +1,14 @@
+{
+  "appId": "com.wyrickstudios.WSPuffer",
+  "appName": "WSPuffer",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#062a3a",
+    "scrollEnabled": false
+  },
+  "android": {
+    "backgroundColor": "#062a3a",
+    "allowMixedContent": false
+  }
+}
