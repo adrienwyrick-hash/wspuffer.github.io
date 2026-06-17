@@ -30,6 +30,7 @@ For each product:
 - [ ] Click "Get Started"
 - [ ] Select **Data Not Collected**
 - [ ] Privacy Policy URL: **https://wspuffer.com/privacy.html**
+- [ ] Support URL: **https://wspuffer.com/support.html**
 
 ## 4. App Information
 

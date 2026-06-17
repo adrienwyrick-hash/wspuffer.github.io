@@ -14,6 +14,15 @@ Gameplay state — best score, owned characters, selected character, and sound p
 
 The App offers optional, one-time, non-consumable in-app purchases of cosmetic characters. Purchases are processed entirely by Apple's App Store. We do not see or store your payment details. Information you provide to Apple is governed by [Apple's Privacy Policy](https://www.apple.com/legal/privacy/).
 
+## Deleting your data
+
+Because everything is stored locally on your device, you can delete all of your WSPuffer data at any time:
+
+1. **In-app:** tap **Erase My Data** on the start screen. This immediately wipes your best score, owned characters, selected character, and sound preference.
+2. **Delete the app:** uninstalling WSPuffer removes its entire local storage sandbox from your device.
+
+WSPuffer does not have an account system, so there is no server-side data to delete. Purchases made via Apple's App Store are managed by Apple and can be restored on the same Apple ID using **Restore Purchases**.
+
 ## Children
 
 The App does not knowingly collect any data from anyone, including children. The App is rated 4+ and is suitable for all ages.

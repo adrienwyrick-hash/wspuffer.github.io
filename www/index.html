@@ -105,6 +105,8 @@
     box-shadow:none;animation:none;border-radius:8px;}
   .card .link::after{content:none;}
   .card .link:active{transform:none;opacity:.7;}
+  .card .link.danger{color:#ffb1b1;opacity:.75;}
+  .card .link.danger:hover{opacity:1;}
   .legal{margin-top:8px;font-size:11px;opacity:.55;color:#cfe9ff;letter-spacing:.3px;}
   .legal a{color:inherit;text-decoration:underline;text-underline-offset:2px;}
   .legal .dot{margin:0 6px;opacity:.6;}
@@ -168,6 +170,7 @@
     <div id="cardBest" class="card-best hidden"></div>
     <div class="card-actions">
       <button id="restoreBtn" class="link" type="button">Restore Purchases</button>
+      <button id="eraseBtn" class="link danger" type="button">Erase My Data</button>
     </div>
     <div class="legal">
       <a id="privacyLink" href="#" rel="noopener">Privacy Policy</a>
@@ -2082,6 +2085,26 @@ if (restoreBtnEl) {
       restoreBtnEl.disabled = false;
       restoreBtnEl.textContent = prev;
     });
+  });
+}
+
+var eraseBtnEl = document.getElementById('eraseBtn');
+if (eraseBtnEl) {
+  eraseBtnEl.addEventListener('click', function() {
+    if (!confirm("Erase your best score, owned characters, and settings on this device? Paid characters can be restored later with Restore Purchases.")) return;
+    try {
+      localStorage.removeItem(BEST_KEY);
+      localStorage.removeItem(CHAR_KEY);
+      localStorage.removeItem(SOUND_KEY);
+      localStorage.removeItem(OWNED_KEY);
+    } catch(e) {}
+    bestScore = 0;
+    selectedChar = 'puffer';
+    soundOn = true;
+    if (typeof updateSoundToggle === 'function') updateSoundToggle();
+    renderChips();
+    updateCardBest();
+    showToast('All data erased');
   });
 }
 
