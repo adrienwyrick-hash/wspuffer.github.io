@@ -5,185 +5,444 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#062a3a" />
 <title>WSPuffer — Tap to puff. Squeeze through coral.</title>
-<meta name="description" content="WSPuffer is a one-tap arcade game. Puff up to rise, deflate to fit through coral, beat your best. Free on the App Store." />
+<meta name="description" content="A one-tap arcade game. Puff up to rise, deflate to fit through coral, beat your best. Free on the App Store." />
 <meta property="og:title" content="WSPuffer" />
 <meta property="og:description" content="Tap to puff. Squeeze through coral. Beat your best." />
 <meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
+  :root{
+    --ink:#eaf7ff;
+    --ink-dim:rgba(234,247,255,.78);
+    --ink-faint:rgba(234,247,255,.55);
+    --gold-1:#fff5dc;
+    --gold-2:#ffb84d;
+    --gold-3:#ff8a2e;
+    --teal:#9bd1eb;
+    --glass:rgba(14,62,84,.55);
+    --glass-2:rgba(8,40,58,.55);
+    --line:rgba(255,255,255,.08);
+  }
   *,*::before,*::after{box-sizing:border-box;}
-  html,body{margin:0;min-height:100%;
-    background:linear-gradient(180deg,#021522 0%,#062a3a 45%,#0c4660 100%);
-    color:#eaf7ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;}
-  body{overflow-x:hidden;}
-  a{color:#9bd1eb;}
-  /* ambient bubbles */
-  .bubbles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
-  .bubble{position:absolute;bottom:-60px;border-radius:50%;
-    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.7), rgba(255,255,255,.05) 70%);
-    box-shadow:inset 0 0 4px rgba(255,255,255,.3);
-    animation:rise linear infinite;opacity:0;}
-  @keyframes rise{
-    0%{transform:translate(0,0) scale(.9);opacity:0;}
-    8%{opacity:.55;}
-    50%{transform:translate(14px,-50vh) scale(1);}
-    100%{transform:translate(-10px,-110vh) scale(1.05);opacity:0;}
-  }
-  nav{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;
-    padding:20px 28px;}
-  nav .brand{font-weight:900;letter-spacing:1px;font-size:18px;
-    background:linear-gradient(180deg,#fff5dc,#ffb84d);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  nav .links{display:flex;gap:18px;font-size:13px;}
-  nav .links a{text-decoration:none;opacity:.8;}
-  nav .links a:hover{opacity:1;}
-  main{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:48px 24px 80px;}
-  .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;margin:24px 0 60px;}
-  .hero .puff{font-size:96px;line-height:1;filter:drop-shadow(0 12px 28px rgba(255,184,77,.45));
-    animation:bob 4s ease-in-out infinite;}
-  @keyframes bob{
-    0%,100%{transform:translateY(0) rotate(-2deg);}
-    50%{transform:translateY(-10px) rotate(2deg);}
-  }
-  .hero h1{margin:0;font-size:clamp(40px,7vw,72px);font-weight:900;letter-spacing:.5px;
-    background:linear-gradient(180deg,#fff5dc 0%,#ffb84d 60%,#ff8a2e 100%);
+  html,body{margin:0;min-height:100%;background:#021522;color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;font-variant-ligatures:common-ligatures;
+    text-rendering:optimizeLegibility;line-height:1.55;overflow-x:hidden;}
+  body{background:
+    radial-gradient(120% 60% at 50% 0%, rgba(40,110,150,.35) 0%, transparent 60%),
+    linear-gradient(180deg,#021522 0%,#062a3a 45%,#0c4660 100%);
+    background-attachment:fixed;}
+  a{color:var(--teal);text-decoration:none;}
+  a:hover{opacity:.85;}
+
+  /* Live ocean canvas behind everything */
+  #ocean{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;
+    mix-blend-mode:screen;opacity:.9;}
+  /* sun rays */
+  .rays{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .rays::before,.rays::after{content:'';position:absolute;top:-10%;width:200%;height:120%;
+    background:repeating-linear-gradient(95deg, rgba(255,255,255,0) 0 60px, rgba(255,255,255,.04) 60px 100px);
+    transform-origin:50% 0;animation:rays-drift 22s linear infinite;}
+  .rays::after{animation-duration:38s;opacity:.6;background:repeating-linear-gradient(80deg, rgba(255,255,255,0) 0 90px, rgba(255,255,255,.025) 90px 140px);}
+  @keyframes rays-drift{from{transform:translateX(-5%) skewX(-6deg);} to{transform:translateX(0%) skewX(-6deg);}}
+
+  /* Layout */
+  nav{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;
+    padding:22px 32px;}
+  nav .brand{font-weight:900;letter-spacing:1.4px;font-size:16px;
+    background:linear-gradient(180deg,var(--gold-1),var(--gold-2));
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 14px rgba(255,184,77,.45)) drop-shadow(0 0 28px rgba(255,184,77,.2));}
-  .hero p.tag{margin:0;font-size:clamp(16px,2.2vw,20px);opacity:.85;max-width:560px;line-height:1.45;}
-  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px;}
-  .badge,.cta{
-    display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;
-    font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.3px;
-    transition:transform .15s ease, box-shadow .15s ease;}
-  .badge{background:#000;color:#fff;border:1px solid rgba(255,255,255,.18);
-    box-shadow:0 8px 24px rgba(0,0,0,.45);}
-  .badge:hover{transform:translateY(-2px);}
-  .badge small{display:block;font-size:10px;opacity:.7;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
-  .badge strong{font-size:18px;font-weight:800;}
-  .badge .applogo{font-size:24px;}
-  .cta{background:linear-gradient(180deg,#ffd17a 0%,#ffb84d 55%,#ff9a26 100%);color:#3a1f00;
-    box-shadow:0 10px 28px rgba(255,154,38,.45),inset 0 1px 0 rgba(255,255,255,.5);}
-  .cta:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(255,154,38,.55);}
-  .pill{display:inline-block;background:#0a3a4eaa;border:1px solid rgba(255,255,255,.1);
-    color:#cfe9ff;font-size:12px;letter-spacing:1.5px;padding:6px 12px;border-radius:999px;
-    text-transform:uppercase;font-weight:700;}
-  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;
-    margin:60px 0 40px;}
-  .feature{background:linear-gradient(160deg,rgba(14,62,84,.85),rgba(8,40,58,.85));
-    border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px 22px 20px;
-    box-shadow:0 14px 40px rgba(0,0,0,.35);}
-  .feature .emoji{font-size:34px;line-height:1;margin-bottom:10px;
-    filter:drop-shadow(0 4px 12px rgba(255,184,77,.35));}
-  .feature h3{margin:0 0 6px;font-size:17px;font-weight:800;}
-  .feature p{margin:0;opacity:.78;font-size:13.5px;line-height:1.5;}
-  .roster{margin:50px 0 30px;text-align:center;}
-  .roster h2{font-size:24px;font-weight:900;margin:0 0 14px;letter-spacing:.5px;}
-  .fish-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-  .fish{width:96px;height:96px;border-radius:22px;
-    background:linear-gradient(160deg,#0a2a3c,#051824);border:2px solid rgba(255,255,255,.06);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.4);}
-  .fish .em{font-size:42px;line-height:1;}
-  .fish .lbl{font-size:10px;letter-spacing:1px;opacity:.7;margin-top:4px;text-transform:uppercase;}
-  .fish.gold{border-color:#ffb84d;box-shadow:0 10px 26px rgba(255,184,77,.35),inset 0 1px 0 rgba(255,255,255,.12);}
-  footer{position:relative;z-index:1;padding:30px 24px 50px;text-align:center;
-    border-top:1px solid rgba(255,255,255,.06);margin-top:40px;}
-  footer .links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:13px;}
-  footer .links a{color:#9bd1eb;text-decoration:none;opacity:.85;}
-  footer .links a:hover{opacity:1;text-decoration:underline;}
-  footer .copy{margin-top:14px;font-size:11px;opacity:.5;letter-spacing:.5px;}
-  @media (max-width:520px){
-    nav{padding:16px 18px;}
-    nav .links{gap:12px;}
-    .hero{margin:12px 0 40px;}
-    .hero .puff{font-size:72px;}
+    text-decoration:none;display:inline-flex;align-items:center;gap:10px;}
+  nav .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--gold-2);
+    box-shadow:0 0 14px var(--gold-2);}
+  nav .links{display:flex;gap:24px;font-size:13.5px;font-weight:500;}
+  nav .links a{color:var(--ink-dim);}
+  nav .links a:hover{color:var(--ink);opacity:1;}
+
+  main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px;}
+
+  /* HERO */
+  .hero{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;
+    padding:60px 0 90px;}
+  .hero-text{position:relative;}
+  .hero .pill{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:1.8px;
+    text-transform:uppercase;color:var(--ink-dim);
+    background:rgba(255,255,255,.04);border:1px solid var(--line);
+    padding:7px 12px;border-radius:999px;margin-bottom:24px;}
+  .hero .pill .blip{width:6px;height:6px;border-radius:50%;background:var(--gold-2);
+    box-shadow:0 0 10px var(--gold-2);animation:blip 1.6s ease-in-out infinite;}
+  @keyframes blip{0%,100%{opacity:.5;}50%{opacity:1;}}
+  .hero h1{margin:0 0 18px;font-size:clamp(40px,6.5vw,72px);font-weight:900;letter-spacing:-1px;
+    line-height:1.02;
+    background:linear-gradient(180deg,#fff7e2 0%,#ffd17a 55%,#ff9a26 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 2px 24px rgba(255,184,77,.35));}
+  .hero .lead{margin:0 0 30px;font-size:clamp(15px,1.8vw,18px);color:var(--ink-dim);max-width:520px;}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .badge{display:inline-flex;align-items:center;gap:12px;padding:13px 22px;border-radius:14px;
+    background:linear-gradient(180deg,#0f0f0f,#000);color:#fff;
+    border:1px solid rgba(255,255,255,.16);box-shadow:0 14px 32px rgba(0,0,0,.5);
+    transition:transform .18s ease, box-shadow .18s ease;text-decoration:none;}
+  .badge:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(0,0,0,.6);opacity:1;}
+  .badge .glyph{font-size:28px;line-height:1;}
+  .badge .copy{display:flex;flex-direction:column;line-height:1.1;}
+  .badge .copy small{font-size:10px;font-weight:500;opacity:.7;letter-spacing:.6px;text-transform:uppercase;}
+  .badge .copy strong{font-size:18px;font-weight:700;letter-spacing:.2px;}
+  .quiet{color:var(--ink-faint);font-size:13px;}
+
+  /* Phone mockup */
+  .phone-wrap{display:flex;justify-content:center;align-items:center;position:relative;}
+  .phone{position:relative;width:min(280px,72vw);aspect-ratio:9/19.5;
+    border-radius:46px;background:#000;
+    padding:11px;
+    box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1.5px rgba(255,255,255,.08),
+      inset 0 0 0 1.5px rgba(255,255,255,.06);
+    transform:rotate(-2.5deg);
+    animation:phone-float 7s ease-in-out infinite;}
+  @keyframes phone-float{0%,100%{transform:rotate(-2.5deg) translateY(0);}
+    50%{transform:rotate(-2.5deg) translateY(-10px);}}
+  .phone::before{content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:90px;height:24px;border-radius:14px;background:#000;z-index:3;}
+  .phone-screen{position:relative;border-radius:36px;height:100%;width:100%;overflow:hidden;
+    background:linear-gradient(180deg,#021522 0%,#062a3a 45%,#0c4660 100%);}
+  .phone-screen svg{position:absolute;inset:0;width:100%;height:100%;}
+  .phone-shine{position:absolute;inset:0;border-radius:36px;pointer-events:none;
+    background:linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 30%);}
+
+  /* Sections */
+  section{padding:50px 0;}
+  h2.heading{font-size:clamp(26px,3.6vw,38px);font-weight:900;letter-spacing:-.3px;margin:0 0 8px;}
+  .sub{color:var(--ink-faint);font-size:14.5px;margin:0 0 30px;letter-spacing:.2px;}
+
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;}
+  .feature{position:relative;padding:24px 22px;border-radius:22px;
+    background:linear-gradient(160deg,var(--glass),var(--glass-2));
+    backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.35);
+    overflow:hidden;transition:transform .25s ease, border-color .25s ease;}
+  .feature:hover{transform:translateY(-4px);border-color:rgba(255,184,77,.25);}
+  .feature::before{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,184,77,.25), rgba(255,184,77,0) 35%, rgba(120,200,255,.18) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;padding:1px;opacity:.7;}
+  .feature .icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+    border-radius:12px;background:rgba(255,184,77,.14);color:var(--gold-2);
+    margin-bottom:14px;}
+  .feature h3{margin:0 0 6px;font-size:17px;font-weight:800;letter-spacing:-.2px;}
+  .feature p{margin:0;color:var(--ink-dim);font-size:14px;line-height:1.55;}
+
+  /* Roster */
+  .roster{text-align:center;}
+  .fish-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:680px;margin:0 auto;}
+  .fish{position:relative;padding:18px 12px 14px;border-radius:20px;
+    background:linear-gradient(160deg,var(--glass),var(--glass-2));
+    border:1px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.35);
+    transition:transform .25s ease, border-color .25s ease;}
+  .fish:hover{transform:translateY(-3px);border-color:rgba(255,184,77,.25);}
+  .fish svg{display:block;width:100%;height:78px;}
+  .fish .name{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+    margin-top:8px;color:var(--ink-faint);font-weight:700;}
+  .fish.featured{border-color:rgba(255,184,77,.35);
+    box-shadow:0 14px 36px rgba(255,184,77,.18),inset 0 1px 0 rgba(255,255,255,.06);}
+  .fish.featured .name{color:var(--gold-2);}
+
+  /* Reveal on scroll */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.shown{opacity:1;transform:translateY(0);}
+
+  footer{position:relative;z-index:1;padding:50px 24px 60px;margin-top:30px;
+    border-top:1px solid var(--line);text-align:center;}
+  footer .row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;font-size:13px;
+    color:var(--ink-dim);}
+  footer .copy{margin-top:18px;color:var(--ink-faint);font-size:11.5px;letter-spacing:.5px;}
+
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;text-align:center;padding:30px 0 50px;}
+    .hero .lead{margin-left:auto;margin-right:auto;}
+    .cta-row{justify-content:center;}
+    nav .links{gap:14px;}
+    .phone{transform:rotate(0deg);animation:none;margin:24px auto 0;}
+    .fish-row{grid-template-columns:repeat(2,1fr);}
   }
 </style>
 </head>
 <body>
-<div class="bubbles" aria-hidden="true">
-  <span class="bubble" style="left:6%;width:10px;height:10px;animation-duration:13s;animation-delay:0s;"></span>
-  <span class="bubble" style="left:14%;width:18px;height:18px;animation-duration:18s;animation-delay:3s;"></span>
-  <span class="bubble" style="left:22%;width:7px;height:7px;animation-duration:10s;animation-delay:1s;"></span>
-  <span class="bubble" style="left:30%;width:22px;height:22px;animation-duration:22s;animation-delay:6s;"></span>
-  <span class="bubble" style="left:40%;width:9px;height:9px;animation-duration:12s;animation-delay:2s;"></span>
-  <span class="bubble" style="left:50%;width:14px;height:14px;animation-duration:16s;animation-delay:5s;"></span>
-  <span class="bubble" style="left:60%;width:6px;height:6px;animation-duration:9s;animation-delay:4s;"></span>
-  <span class="bubble" style="left:70%;width:20px;height:20px;animation-duration:20s;animation-delay:7s;"></span>
-  <span class="bubble" style="left:80%;width:11px;height:11px;animation-duration:14s;animation-delay:1.5s;"></span>
-  <span class="bubble" style="left:90%;width:16px;height:16px;animation-duration:17s;animation-delay:3.5s;"></span>
-</div>
+<canvas id="ocean" aria-hidden="true"></canvas>
+<div class="rays" aria-hidden="true"></div>
 
 <nav>
-  <div class="brand">WSPUFFER</div>
+  <a class="brand" href="/"><span class="dot"></span>WSPUFFER</a>
   <div class="links">
-    <a href="support.html">Support</a>
-    <a href="privacy.html">Privacy</a>
+    <a href="/support.html">Support</a>
+    <a href="/privacy.html">Privacy</a>
     <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms</a>
-    <a href="https://github.com/adrienwyrick-hash/wspuffer.github.io">GitHub</a>
   </div>
 </nav>
 
 <main>
   <section class="hero">
-    <span class="pill">Now in review</span>
-    <div class="puff">🐡</div>
-    <h1>Tap to puff.<br/>Squeeze through coral.</h1>
-    <p class="tag">A one-tap arcade game. Inflate to rise, deflate to fit. The bigger you puff, the harder it gets to slip through the gaps. Free on iPhone and iPad.</p>
-    <div class="cta-row">
-      <a class="badge" href="#" aria-label="Download on the App Store (coming soon)">
-        <span class="applogo">&#63743;</span>
-        <span>
-          <small>Download on the</small>
-          <strong>App Store</strong>
-        </span>
-      </a>
+    <div class="hero-text reveal">
+      <span class="pill"><span class="blip"></span> Now in review</span>
+      <h1>Tap to puff.<br/>Squeeze through coral.</h1>
+      <p class="lead">A one-tap arcade game with hand-animated underwater life. Inflate to rise, deflate to fit. The bigger you puff, the harder it gets to slip through the gaps.</p>
+      <div class="cta-row">
+        <a class="badge" href="#" aria-label="Download on the App Store">
+          <span class="glyph">&#63743;</span>
+          <span class="copy"><small>Download on the</small><strong>App Store</strong></span>
+        </a>
+        <span class="quiet">Free · iPhone &amp; iPad</span>
+      </div>
+    </div>
+
+    <div class="phone-wrap reveal">
+      <div class="phone">
+        <div class="phone-screen">
+          <svg viewBox="0 0 280 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+              <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#0a4d6e"/>
+                <stop offset=".55" stop-color="#0e6b8a"/>
+                <stop offset="1" stop-color="#062a3a"/>
+              </linearGradient>
+              <radialGradient id="pufBody" cx="35%" cy="35%" r="60%">
+                <stop offset="0" stop-color="#ffe2a0"/>
+                <stop offset=".6" stop-color="#e8943a"/>
+                <stop offset="1" stop-color="#a35515"/>
+              </radialGradient>
+            </defs>
+            <rect width="280" height="600" fill="url(#bg)"/>
+            <!-- sun rays inside screen -->
+            <g opacity=".08" fill="#fff">
+              <polygon points="60,-10 100,-10 140,610 20,610"/>
+              <polygon points="160,-10 200,-10 240,610 120,610"/>
+            </g>
+            <!-- seabed -->
+            <path d="M0 540 Q70 510 140 540 T280 540 V600 H0 Z" fill="#093148" opacity=".7"/>
+            <!-- seaweed -->
+            <g stroke="#1f9e6e" stroke-width="3" fill="none" opacity=".7" stroke-linecap="round">
+              <path d="M30 555 Q40 510 28 470 Q22 440 35 415"/>
+              <path d="M80 555 Q90 520 80 480 Q72 450 85 420"/>
+              <path d="M225 555 Q215 515 230 478 Q240 448 225 418"/>
+            </g>
+            <!-- coral pillars -->
+            <g fill="#d65a3f" opacity=".85">
+              <rect x="195" y="160" width="46" height="160" rx="14"/>
+              <rect x="195" y="360" width="46" height="180" rx="14"/>
+            </g>
+            <g fill="#7fc1c9" opacity=".7">
+              <rect x="201" y="166" width="34" height="148" rx="10"/>
+              <rect x="201" y="366" width="34" height="168" rx="10"/>
+            </g>
+            <!-- bubbles -->
+            <g fill="#cfe9ff" opacity=".5">
+              <circle cx="50" cy="120" r="4"/>
+              <circle cx="92" cy="220" r="6"/>
+              <circle cx="40" cy="320" r="3"/>
+              <circle cx="160" cy="90" r="5"/>
+              <circle cx="170" cy="430" r="4"/>
+            </g>
+            <!-- pufferfish in middle, spikes out -->
+            <g transform="translate(110 300)">
+              <g stroke="#7a2f0a" stroke-width="3" stroke-linecap="round">
+                <line x1="0" y1="-38" x2="0" y2="-58"/>
+                <line x1="27" y1="-27" x2="40" y2="-40"/>
+                <line x1="38" y1="0" x2="58" y2="0"/>
+                <line x1="27" y1="27" x2="40" y2="40"/>
+                <line x1="0" y1="38" x2="0" y2="58"/>
+                <line x1="-27" y1="27" x2="-40" y2="40"/>
+                <line x1="-38" y1="0" x2="-58" y2="0"/>
+                <line x1="-27" y1="-27" x2="-40" y2="-40"/>
+              </g>
+              <polygon points="-30,0 -52,-18 -52,18" fill="#b65a14"/>
+              <circle r="34" fill="url(#pufBody)"/>
+              <ellipse cx="-2" cy="11" rx="18" ry="7" fill="#fff0c8" opacity=".55"/>
+              <circle cx="14" cy="-7" r="6" fill="#fff"/>
+              <circle cx="16" cy="-7" r="3" fill="#1a1a1f"/>
+              <circle cx="17" cy="-9" r="1.2" fill="#fff"/>
+              <path d="M18 6 q5 4 -2 9" stroke="#5a2a08" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- HUD score -->
+            <text x="140" y="58" text-anchor="middle" fill="#eaf7ff" font-family="Inter,sans-serif" font-weight="900" font-size="42" opacity=".95">07</text>
+          </svg>
+        </div>
+        <div class="phone-shine"></div>
+      </div>
     </div>
   </section>
 
-  <section class="features">
-    <div class="feature">
-      <div class="emoji">👆</div>
-      <h3>One tap</h3>
-      <p>Tap to puff and rise. Let go to shrink and sink. That's the entire control scheme — and it's harder than it sounds.</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">🪸</div>
-      <h3>Tight squeezes</h3>
-      <p>Coral gaps don't care how puffed up you are. Time your deflation to slip through, then puff again to climb.</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">🏆</div>
-      <h3>Beat your best</h3>
-      <p>Every run logs your best score. No accounts, no leaderboards, no nag screens — just you versus the reef.</p>
-    </div>
-    <div class="feature">
-      <div class="emoji">🤿</div>
-      <h3>Quietly polished</h3>
-      <p>Hand-animated underwater world with jellies, turtles, seahorses, crabs, and the odd scuba diver going about their day.</p>
+  <section>
+    <h2 class="heading reveal">What makes it tick</h2>
+    <p class="sub reveal">Tight controls, a calm-but-hostile reef, and zero noise.</p>
+    <div class="features">
+      <div class="feature reveal">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V6a3 3 0 0 1 6 0v5"/><path d="M5 11h14l-1 9H6z"/></svg>
+        </div>
+        <h3>One tap</h3>
+        <p>Tap to puff and rise. Let go to shrink and sink. That's the entire control scheme — harder than it sounds.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c4-4 8-4 12 0"/><path d="M3 13c4-4 8-4 12 0"/><path d="M9 5c2-2 6-2 8 0"/></svg>
+        </div>
+        <h3>Tight squeezes</h3>
+        <p>Coral gaps don't care how puffed up you are. Time your deflation to slip through, then puff again to climb.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 4h3v3a3 3 0 0 1-3 3"/><path d="M7 4H4v3a3 3 0 0 0 3 3"/></svg>
+        </div>
+        <h3>Beat your best</h3>
+        <p>Every run logs your best score. No accounts, no leaderboards, no nag screens — just you versus the reef.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+        </div>
+        <h3>Quietly polished</h3>
+        <p>Hand-animated underwater world with jellies, turtles, seahorses, crabs, and the odd scuba diver going about their day.</p>
+      </div>
     </div>
   </section>
 
   <section class="roster">
-    <h2>Pick your fish</h2>
+    <h2 class="heading reveal">Pick your fish</h2>
+    <p class="sub reveal">Four playable characters. Pufferfish free, the rest at $0.99 each.</p>
     <div class="fish-row">
-      <div class="fish gold"><div class="em">🐡</div><div class="lbl">Pufferfish</div></div>
-      <div class="fish"><div class="em">🐠</div><div class="lbl">Clownfish</div></div>
-      <div class="fish"><div class="em">🐟</div><div class="lbl">Swordfish</div></div>
-      <div class="fish"><div class="em">🦈</div><div class="lbl">Shark</div></div>
+      <div class="fish featured reveal">
+        <svg viewBox="0 0 100 78" aria-hidden="true">
+          <defs><radialGradient id="puf2" cx="35%" cy="35%" r="60%"><stop offset="0" stop-color="#ffe2a0"/><stop offset=".6" stop-color="#e8943a"/><stop offset="1" stop-color="#a35515"/></radialGradient></defs>
+          <g transform="translate(50 39)" stroke="#7a2f0a" stroke-width="2" stroke-linecap="round">
+            <line x1="0" y1="-22" x2="0" y2="-30"/><line x1="16" y1="-16" x2="22" y2="-22"/>
+            <line x1="22" y1="0" x2="30" y2="0"/><line x1="16" y1="16" x2="22" y2="22"/>
+            <line x1="0" y1="22" x2="0" y2="30"/><line x1="-16" y1="16" x2="-22" y2="22"/>
+            <line x1="-22" y1="0" x2="-30" y2="0"/><line x1="-16" y1="-16" x2="-22" y2="-22"/>
+          </g>
+          <polygon points="32,39 18,29 18,49" fill="#b65a14"/>
+          <circle cx="50" cy="39" r="20" fill="url(#puf2)"/>
+          <ellipse cx="48" cy="45" rx="11" ry="4" fill="#fff0c8" opacity=".55"/>
+          <circle cx="58" cy="34" r="3.5" fill="#fff"/>
+          <circle cx="59" cy="34" r="1.8" fill="#1a1a1f"/>
+        </svg>
+        <div class="name">Pufferfish</div>
+      </div>
+      <div class="fish reveal">
+        <svg viewBox="0 0 100 78" aria-hidden="true">
+          <defs><linearGradient id="clown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa44d"/><stop offset=".5" stop-color="#ff7a1f"/><stop offset="1" stop-color="#c44e0e"/></linearGradient></defs>
+          <polygon points="18,39 6,26 12,39 6,52" fill="#222"/>
+          <polygon points="18,39 10,30 10,48" fill="#ff7a1f"/>
+          <ellipse cx="52" cy="39" rx="32" ry="20" fill="url(#clown)"/>
+          <ellipse cx="42" cy="39" rx="4" ry="16" fill="#fff"/>
+          <ellipse cx="62" cy="39" rx="4" ry="14" fill="#fff"/>
+          <polygon points="50,18 56,8 64,18" fill="#222"/>
+          <circle cx="74" cy="34" r="4" fill="#fff"/>
+          <circle cx="75" cy="34" r="2" fill="#0a1424"/>
+        </svg>
+        <div class="name">Clownfish</div>
+      </div>
+      <div class="fish reveal">
+        <svg viewBox="0 0 100 78" aria-hidden="true">
+          <defs><linearGradient id="sword" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#90b5d8"/><stop offset=".5" stop-color="#3a6f9c"/><stop offset="1" stop-color="#1a3f63"/></linearGradient></defs>
+          <ellipse cx="48" cy="40" rx="30" ry="12" fill="url(#sword)"/>
+          <ellipse cx="48" cy="44" rx="26" ry="6" fill="#dbeaff" opacity=".55"/>
+          <polygon points="78,38 96,40 78,42" fill="#cfddee"/>
+          <polygon points="42,28 50,16 56,28" fill="#1a3f63"/>
+          <polygon points="18,40 4,28 12,40 4,52" fill="#1a3f63"/>
+          <circle cx="64" cy="36" r="3" fill="#fff"/>
+          <circle cx="65" cy="36" r="1.6" fill="#0a1424"/>
+        </svg>
+        <div class="name">Swordfish</div>
+      </div>
+      <div class="fish reveal">
+        <svg viewBox="0 0 100 78" aria-hidden="true">
+          <defs><linearGradient id="shark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9b6c2"/><stop offset=".55" stop-color="#5d6d7d"/><stop offset="1" stop-color="#2c3a47"/></linearGradient></defs>
+          <path d="M82 40 Q66 24 50 24 Q34 24 22 40 Q34 56 50 56 Q66 56 82 40 Z" fill="url(#shark)"/>
+          <path d="M76 42 Q54 56 26 44 Q42 50 76 42 Z" fill="#f0f4f8" opacity=".7"/>
+          <polygon points="48,22 54,8 60,22" fill="#2c3a47"/>
+          <polygon points="56,52 62,66 64,52" fill="#3d4d5c"/>
+          <polygon points="18,40 4,26 14,40 4,52" fill="#2c3a47"/>
+          <circle cx="68" cy="36" r="3" fill="#fff"/>
+          <circle cx="69" cy="36" r="1.6" fill="#0a1424"/>
+        </svg>
+        <div class="name">Shark</div>
+      </div>
     </div>
   </section>
 </main>
 
 <footer>
-  <div class="links">
-    <a href="support.html">Support</a>
-    <a href="privacy.html">Privacy Policy</a>
+  <div class="row">
+    <a href="/support.html">Support</a>
+    <a href="/privacy.html">Privacy Policy</a>
     <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of Use</a>
     <a href="mailto:adrienwyrick@gmail.com">Contact</a>
-    <a href="https://github.com/adrienwyrick-hash/wspuffer.github.io">Source</a>
   </div>
-  <div class="copy">© Wyrick Studios. WSPuffer is a trademark of Wyrick Studios.</div>
+  <div class="copy">© Wyrick Studios · WSPuffer is a trademark of Wyrick Studios</div>
 </footer>
 
+<script>
+(function(){
+  // Scroll reveal
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } });
+  }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  // Live ocean canvas (bubbles + drifting particles)
+  var cv = document.getElementById('ocean');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0;
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var bubbles = [];
+  var COUNT = Math.max(30, Math.floor((W * H) / 22000));
+  function spawn(){ for (var i = 0; i < COUNT; i++) bubbles.push({
+    x: Math.random()*W, y: Math.random()*H,
+    r: 1.5 + Math.random()*4,
+    sp: 12 + Math.random()*40,
+    wob: Math.random()*Math.PI*2,
+    a: .25 + Math.random()*.35
+  }); }
+  spawn();
+
+  var last = 0;
+  function tick(now){
+    var dt = Math.min(.033, (now - last) / 1000);
+    last = now;
+    ctx.clearRect(0, 0, W, H);
+    // soft top glow
+    var g = ctx.createRadialGradient(W*.5, -40, 40, W*.5, -40, Math.max(W,H)*.8);
+    g.addColorStop(0, 'rgba(120,200,255,.10)');
+    g.addColorStop(1, 'rgba(120,200,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    for (var i = 0; i < bubbles.length; i++){
+      var b = bubbles[i];
+      b.y -= b.sp * dt;
+      b.x += Math.sin(now * .001 + b.wob) * 6 * dt;
+      if (b.y < -10) { b.y = H + 10; b.x = Math.random() * W; }
+      var grad = ctx.createRadialGradient(b.x - b.r*.3, b.y - b.r*.3, b.r*.1, b.x, b.y, b.r);
+      grad.addColorStop(0, 'rgba(255,255,255,' + (b.a * .9) + ')');
+      grad.addColorStop(.7, 'rgba(255,255,255,' + (b.a * .25) + ')');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>

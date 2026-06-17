@@ -70,7 +70,7 @@ For each product:
 
 ## 9. Final pre-submit
 
-- [ ] Privacy Policy hosted at a public URL (e.g., GitHub Pages or your domain) and pasted into App Store Connect
+- [ ] Privacy Policy hosted at https://wspuffer.com/privacy.html and pasted into App Store Connect
 - [ ] `ITSAppUsesNonExemptEncryption = NO` set in Info.plist (already done in this repo)
 - [ ] `PrivacyInfo.xcprivacy` present in App target (already done in this repo)
 - [ ] Verified Restore Purchases works
