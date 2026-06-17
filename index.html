@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#062a3a" />
+<title>WSPuffer — Tap to puff. Squeeze through coral.</title>
+<meta name="description" content="WSPuffer is a one-tap arcade game. Puff up to rise, deflate to fit through coral, beat your best. Free on the App Store." />
+<meta property="og:title" content="WSPuffer" />
+<meta property="og:description" content="Tap to puff. Squeeze through coral. Beat your best." />
+<meta property="og:type" content="website" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;
+    background:linear-gradient(180deg,#021522 0%,#062a3a 45%,#0c4660 100%);
+    color:#eaf7ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  body{overflow-x:hidden;}
+  a{color:#9bd1eb;}
+  /* ambient bubbles */
+  .bubbles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+  .bubble{position:absolute;bottom:-60px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.7), rgba(255,255,255,.05) 70%);
+    box-shadow:inset 0 0 4px rgba(255,255,255,.3);
+    animation:rise linear infinite;opacity:0;}
+  @keyframes rise{
+    0%{transform:translate(0,0) scale(.9);opacity:0;}
+    8%{opacity:.55;}
+    50%{transform:translate(14px,-50vh) scale(1);}
+    100%{transform:translate(-10px,-110vh) scale(1.05);opacity:0;}
+  }
+  nav{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;
+    padding:20px 28px;}
+  nav .brand{font-weight:900;letter-spacing:1px;font-size:18px;
+    background:linear-gradient(180deg,#fff5dc,#ffb84d);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  nav .links{display:flex;gap:18px;font-size:13px;}
+  nav .links a{text-decoration:none;opacity:.8;}
+  nav .links a:hover{opacity:1;}
+  main{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:48px 24px 80px;}
+  .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;margin:24px 0 60px;}
+  .hero .puff{font-size:96px;line-height:1;filter:drop-shadow(0 12px 28px rgba(255,184,77,.45));
+    animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{
+    0%,100%{transform:translateY(0) rotate(-2deg);}
+    50%{transform:translateY(-10px) rotate(2deg);}
+  }
+  .hero h1{margin:0;font-size:clamp(40px,7vw,72px);font-weight:900;letter-spacing:.5px;
+    background:linear-gradient(180deg,#fff5dc 0%,#ffb84d 60%,#ff8a2e 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(255,184,77,.45)) drop-shadow(0 0 28px rgba(255,184,77,.2));}
+  .hero p.tag{margin:0;font-size:clamp(16px,2.2vw,20px);opacity:.85;max-width:560px;line-height:1.45;}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px;}
+  .badge,.cta{
+    display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;
+    font-weight:800;text-decoration:none;font-size:15px;letter-spacing:.3px;
+    transition:transform .15s ease, box-shadow .15s ease;}
+  .badge{background:#000;color:#fff;border:1px solid rgba(255,255,255,.18);
+    box-shadow:0 8px 24px rgba(0,0,0,.45);}
+  .badge:hover{transform:translateY(-2px);}
+  .badge small{display:block;font-size:10px;opacity:.7;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .badge strong{font-size:18px;font-weight:800;}
+  .badge .applogo{font-size:24px;}
+  .cta{background:linear-gradient(180deg,#ffd17a 0%,#ffb84d 55%,#ff9a26 100%);color:#3a1f00;
+    box-shadow:0 10px 28px rgba(255,154,38,.45),inset 0 1px 0 rgba(255,255,255,.5);}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(255,154,38,.55);}
+  .pill{display:inline-block;background:#0a3a4eaa;border:1px solid rgba(255,255,255,.1);
+    color:#cfe9ff;font-size:12px;letter-spacing:1.5px;padding:6px 12px;border-radius:999px;
+    text-transform:uppercase;font-weight:700;}
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;
+    margin:60px 0 40px;}
+  .feature{background:linear-gradient(160deg,rgba(14,62,84,.85),rgba(8,40,58,.85));
+    border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px 22px 20px;
+    box-shadow:0 14px 40px rgba(0,0,0,.35);}
+  .feature .emoji{font-size:34px;line-height:1;margin-bottom:10px;
+    filter:drop-shadow(0 4px 12px rgba(255,184,77,.35));}
+  .feature h3{margin:0 0 6px;font-size:17px;font-weight:800;}
+  .feature p{margin:0;opacity:.78;font-size:13.5px;line-height:1.5;}
+  .roster{margin:50px 0 30px;text-align:center;}
+  .roster h2{font-size:24px;font-weight:900;margin:0 0 14px;letter-spacing:.5px;}
+  .fish-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .fish{width:96px;height:96px;border-radius:22px;
+    background:linear-gradient(160deg,#0a2a3c,#051824);border:2px solid rgba(255,255,255,.06);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.4);}
+  .fish .em{font-size:42px;line-height:1;}
+  .fish .lbl{font-size:10px;letter-spacing:1px;opacity:.7;margin-top:4px;text-transform:uppercase;}
+  .fish.gold{border-color:#ffb84d;box-shadow:0 10px 26px rgba(255,184,77,.35),inset 0 1px 0 rgba(255,255,255,.12);}
+  footer{position:relative;z-index:1;padding:30px 24px 50px;text-align:center;
+    border-top:1px solid rgba(255,255,255,.06);margin-top:40px;}
+  footer .links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:13px;}
+  footer .links a{color:#9bd1eb;text-decoration:none;opacity:.85;}
+  footer .links a:hover{opacity:1;text-decoration:underline;}
+  footer .copy{margin-top:14px;font-size:11px;opacity:.5;letter-spacing:.5px;}
+  @media (max-width:520px){
+    nav{padding:16px 18px;}
+    nav .links{gap:12px;}
+    .hero{margin:12px 0 40px;}
+    .hero .puff{font-size:72px;}
+  }
+</style>
+</head>
+<body>
+<div class="bubbles" aria-hidden="true">
+  <span class="bubble" style="left:6%;width:10px;height:10px;animation-duration:13s;animation-delay:0s;"></span>
+  <span class="bubble" style="left:14%;width:18px;height:18px;animation-duration:18s;animation-delay:3s;"></span>
+  <span class="bubble" style="left:22%;width:7px;height:7px;animation-duration:10s;animation-delay:1s;"></span>
+  <span class="bubble" style="left:30%;width:22px;height:22px;animation-duration:22s;animation-delay:6s;"></span>
+  <span class="bubble" style="left:40%;width:9px;height:9px;animation-duration:12s;animation-delay:2s;"></span>
+  <span class="bubble" style="left:50%;width:14px;height:14px;animation-duration:16s;animation-delay:5s;"></span>
+  <span class="bubble" style="left:60%;width:6px;height:6px;animation-duration:9s;animation-delay:4s;"></span>
+  <span class="bubble" style="left:70%;width:20px;height:20px;animation-duration:20s;animation-delay:7s;"></span>
+  <span class="bubble" style="left:80%;width:11px;height:11px;animation-duration:14s;animation-delay:1.5s;"></span>
+  <span class="bubble" style="left:90%;width:16px;height:16px;animation-duration:17s;animation-delay:3.5s;"></span>
+</div>
+
+<nav>
+  <div class="brand">WSPUFFER</div>
+  <div class="links">
+    <a href="privacy.html">Privacy</a>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms</a>
+    <a href="https://github.com/adrienwyrick-hash/wspuffer.github.io">GitHub</a>
+  </div>
+</nav>
+
+<main>
+  <section class="hero">
+    <span class="pill">Now in review</span>
+    <div class="puff">🐡</div>
+    <h1>Tap to puff.<br/>Squeeze through coral.</h1>
+    <p class="tag">A one-tap arcade game. Inflate to rise, deflate to fit. The bigger you puff, the harder it gets to slip through the gaps. Free on iPhone and iPad.</p>
+    <div class="cta-row">
+      <a class="badge" href="#" aria-label="Download on the App Store (coming soon)">
+        <span class="applogo">&#63743;</span>
+        <span>
+          <small>Download on the</small>
+          <strong>App Store</strong>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <div class="emoji">👆</div>
+      <h3>One tap</h3>
+      <p>Tap to puff and rise. Let go to shrink and sink. That's the entire control scheme — and it's harder than it sounds.</p>
+    </div>
+    <div class="feature">
+      <div class="emoji">🪸</div>
+      <h3>Tight squeezes</h3>
+      <p>Coral gaps don't care how puffed up you are. Time your deflation to slip through, then puff again to climb.</p>
+    </div>
+    <div class="feature">
+      <div class="emoji">🏆</div>
+      <h3>Beat your best</h3>
+      <p>Every run logs your best score. No accounts, no leaderboards, no nag screens — just you versus the reef.</p>
+    </div>
+    <div class="feature">
+      <div class="emoji">🤿</div>
+      <h3>Quietly polished</h3>
+      <p>Hand-animated underwater world with jellies, turtles, seahorses, crabs, and the odd scuba diver going about their day.</p>
+    </div>
+  </section>
+
+  <section class="roster">
+    <h2>Pick your fish</h2>
+    <div class="fish-row">
+      <div class="fish gold"><div class="em">🐡</div><div class="lbl">Pufferfish</div></div>
+      <div class="fish"><div class="em">🐠</div><div class="lbl">Clownfish</div></div>
+      <div class="fish"><div class="em">🐟</div><div class="lbl">Swordfish</div></div>
+      <div class="fish"><div class="em">🦈</div><div class="lbl">Shark</div></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of Use</a>
+    <a href="mailto:adrienwyrick@gmail.com">Contact</a>
+    <a href="https://github.com/adrienwyrick-hash/wspuffer.github.io">Source</a>
+  </div>
+  <div class="copy">© Wyrick Studios. WSPuffer is a trademark of Wyrick Studios.</div>
+</footer>
+
+</body>
+</html>
