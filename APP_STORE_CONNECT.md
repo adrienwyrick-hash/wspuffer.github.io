@@ -40,17 +40,22 @@ In App Store Connect → Your App → Services → **Game Center** → Enable.
 - Sort Order: **High to Low**
 - Add English localization: name "Best Score", score format suffix "puffs"
 
-**Achievements** (IDs must match exactly):
+**Achievements** (IDs must match the JS catalog exactly):
 
-| Reference Name      | Achievement ID                                       | Points | Hidden |
-|---------------------|------------------------------------------------------|--------|--------|
-| First Pop           | `com.wyrickstudios.WSPuffer.firstpop`                | 5      | No     |
-| Reef Diver (10)     | `com.wyrickstudios.WSPuffer.reefdiver`               | 10     | No     |
-| Coral Master (25)   | `com.wyrickstudios.WSPuffer.coralmaster`             | 25     | No     |
-| Puff Legend (50)    | `com.wyrickstudios.WSPuffer.pufflegend`              | 50     | No     |
-| Reef Collector      | `com.wyrickstudios.WSPuffer.collector`               | 10     | No     |
+| Reference Name         | Achievement ID                                       | Trigger          | Points | Hidden |
+|------------------------|------------------------------------------------------|------------------|--------|--------|
+| First Dive             | `com.wyrickstudios.WSPuffer.firstdive`               | Play 1 game      | 5      | No     |
+| First Pop              | `com.wyrickstudios.WSPuffer.firstpop`                | Score 1          | 5      | No     |
+| Getting Started        | `com.wyrickstudios.WSPuffer.tenpoints`               | Score 5          | 5      | No     |
+| Reef Diver             | `com.wyrickstudios.WSPuffer.reefdiver`               | Score 10         | 10     | No     |
+| Coral Master           | `com.wyrickstudios.WSPuffer.coralmaster`             | Score 25         | 25     | No     |
+| Puff Legend            | `com.wyrickstudios.WSPuffer.pufflegend`              | Score 50         | 50     | No     |
+| High Dive              | `com.wyrickstudios.WSPuffer.highdive`                | Score 100        | 100    | No     |
+| Persistent             | `com.wyrickstudios.WSPuffer.persistent`              | Play 10 games    | 10     | No     |
+| Marathon               | `com.wyrickstudios.WSPuffer.marathon`                | Play 50 games    | 25     | No     |
+| Reef Collector         | `com.wyrickstudios.WSPuffer.collector`               | Own all 4 fish   | 10     | No     |
 
-For each achievement: add image, name, and "before earned" / "after earned" description in English.
+For each achievement: add image (1024×1024), name, and "before earned" / "after earned" description in English.
 
 ## 2c. Sign in with Apple
 
