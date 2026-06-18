@@ -135,19 +135,27 @@
   .card.dead #cardBest{display:none;}
   /* CTA row: home + play now side by side on the game-over screen */
   .cta-row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;}
+  /* Home button matches Play Now / Try Again — same prominent gold glass */
   #homeBtn{position:relative;overflow:hidden;
-    background:linear-gradient(180deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.10) 100%);
-    backdrop-filter:blur(16px) saturate(160%);
-    -webkit-backdrop-filter:blur(16px) saturate(160%);
-    border:1px solid rgba(255,255,255,.22);color:#eaf7ff;
-    font-weight:800;letter-spacing:.4px;font-size:15px;
-    padding:13px 22px;border-radius:999px;cursor:pointer;
-    animation:none;min-width:auto;
+    background:linear-gradient(180deg, rgba(255,210,140,.55) 0%, rgba(255,160,60,.35) 55%, rgba(180,80,20,.45) 100%);
+    backdrop-filter:blur(20px) saturate(200%);
+    -webkit-backdrop-filter:blur(20px) saturate(200%);
+    border:1px solid rgba(255,210,140,.55);
+    color:#fff;font-weight:900;letter-spacing:.6px;
+    padding:15px 28px;border-radius:999px;font-size:17px;cursor:pointer;
+    text-shadow:0 1px 3px rgba(0,0,0,.35);
     box-shadow:
-      inset 0 1.5px 0 rgba(255,255,255,.32),
-      inset 0 -1px 0 rgba(0,0,0,.18),
-      0 8px 22px rgba(0,0,0,.4);}
-  #homeBtn:active{transform:translateY(1px) scale(.99);}
+      inset 0 1.5px 0 rgba(255,255,255,.55),
+      inset 0 -1.5px 0 rgba(0,0,0,.25),
+      0 18px 46px rgba(255,150,40,.4),
+      0 4px 12px rgba(0,0,0,.3);
+    animation:pulse 2s ease-in-out infinite;
+    min-width:auto;}
+  #homeBtn::after{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;
+    background:linear-gradient(110deg, transparent 0%, rgba(255,255,255,.5) 50%, transparent 100%);
+    transform:skewX(-20deg);animation:shine 2.8s ease-in-out infinite;
+    border-radius:inherit;}
+  #homeBtn:active{transform:translateY(1px) scale(.99);animation:none;}
   .card-actions{margin-top:18px;display:flex;flex-direction:column;gap:8px;align-items:center;}
   .action-row{display:flex;gap:8px;width:100%;justify-content:center;}
   .card .link.half{flex:1;min-width:0;padding:9px 8px;}
@@ -3033,6 +3041,22 @@ if (moreBtnEl && moreOptionsEl) {
     var hidden = moreOptionsEl.classList.toggle('hidden');
     moreBtnEl.textContent = hidden ? '⋯ ' + t('more') : '× ' + t('less');
   });
+}
+
+// On non-iOS (web), hide the buttons that genuinely only work on iOS so
+// visitors aren't greeted with three useless "iOS only" toasts.
+if (!isNative()) {
+  ['leaderboardBtn', 'achievementsBtn', 'signInBtn'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+  // The Leaderboard/Achievements row would be left as an empty flex
+  // container; hide it too if both children disappeared.
+  var actionRow = document.querySelector('.action-row');
+  if (actionRow && actionRow.children.length &&
+      Array.prototype.every.call(actionRow.children, function(c){ return c.classList.contains('hidden'); })) {
+    actionRow.classList.add('hidden');
+  }
 }
 
 // Authenticate Game Center silently on launch
