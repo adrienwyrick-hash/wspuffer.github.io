@@ -125,7 +125,66 @@
   .card-best{margin-top:14px;font-size:11px;letter-spacing:3px;opacity:.7;color:#cfe9ff;
     text-transform:uppercase;}
   .card-best strong{color:#ffd28a;font-weight:800;letter-spacing:1.5px;margin-left:4px;}
+  /* On the game-over screen the card goes transparent so only the
+     title + score + buttons float against the underwater scene. */
+  .card.dead{
+    background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
+    border-color:transparent;box-shadow:none;}
+  .card.dead::before{display:none;}
+  .card.dead #chars,.card.dead .card-actions,.card.dead .legal,
+  .card.dead #cardBest{display:none;}
+  /* CTA row: home + play now side by side on the game-over screen */
+  .cta-row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;}
+  #homeBtn{position:relative;overflow:hidden;
+    background:linear-gradient(180deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.10) 100%);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    border:1px solid rgba(255,255,255,.22);color:#eaf7ff;
+    font-weight:800;letter-spacing:.4px;font-size:15px;
+    padding:13px 22px;border-radius:999px;cursor:pointer;
+    animation:none;min-width:auto;
+    box-shadow:
+      inset 0 1.5px 0 rgba(255,255,255,.32),
+      inset 0 -1px 0 rgba(0,0,0,.18),
+      0 8px 22px rgba(0,0,0,.4);}
+  #homeBtn:active{transform:translateY(1px) scale(.99);}
   .card-actions{margin-top:18px;display:flex;flex-direction:column;gap:8px;align-items:center;}
+  .action-row{display:flex;gap:8px;width:100%;justify-content:center;}
+  .card .link.half{flex:1;min-width:0;padding:9px 8px;}
+  /* Apple-spec Sign in with Apple button */
+  .card .link.siwa{
+    background:#000;
+    border:1px solid #000;
+    color:#fff;
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);
+    padding:11px 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    min-height:44px;position:relative;overflow:hidden;
+    font-weight:600;font-size:14px;letter-spacing:.2px;
+    animation:siwaPulse 3.6s ease-in-out infinite;}
+  .card .link.siwa::before{content:none;}
+  .card .link.siwa::after{content:"";position:absolute;top:0;left:-60%;width:50%;height:100%;
+    background:linear-gradient(110deg, transparent 0%, rgba(255,255,255,.18) 50%, transparent 100%);
+    transform:skewX(-20deg);animation:siwaShine 3.6s ease-in-out infinite;border-radius:inherit;}
+  .card .link.siwa:hover{background:#0a0a0a;}
+  .card .link.siwa:active{transform:translateY(1px) scale(.99);}
+  .card .link.siwa .siwa-logo{
+    width:16px;height:18px;display:inline-block;
+    background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'><path d='M16.365 1.43c0 1.14-.46 2.23-1.24 3.04-.78.82-2.05 1.45-3.1 1.36-.13-1.11.42-2.27 1.18-3.04.77-.8 2.07-1.41 3.16-1.36zM20.39 17.4c-.6 1.4-.88 2.02-1.65 3.26-1.07 1.72-2.58 3.86-4.45 3.88-1.67.02-2.1-1.09-4.37-1.08-2.27.01-2.74 1.1-4.41 1.08-1.87-.02-3.3-1.96-4.37-3.68C-.42 16.5-.7 11.17 1.27 8.34c1.4-2 3.6-3.18 5.67-3.18 2.11 0 3.44 1.16 5.18 1.16 1.69 0 2.72-1.16 5.16-1.16 1.85 0 3.81 1 5.21 2.74-4.58 2.51-3.84 9.04-2.1 9.5z'/></svg>") center/contain no-repeat;}
+  .card .link.siwa .siwa-text{display:inline;}
+  @keyframes siwaPulse{
+    0%,100%{box-shadow:0 6px 18px rgba(0,0,0,.4);}
+    50%   {box-shadow:0 10px 28px rgba(120,140,255,.35),0 6px 18px rgba(0,0,0,.4);}
+  }
+  @keyframes siwaShine{
+    0%{left:-60%;} 70%{left:120%;} 100%{left:120%;}
+  }
+  .more-toggle{opacity:.7;font-size:12px !important;padding:6px 14px !important;min-width:auto !important;}
+  .more-toggle:hover{opacity:1;}
+  #moreOptions{display:flex;flex-direction:column;gap:8px;width:100%;align-items:center;
+    animation:fadeIn .25s ease both;}
+  #moreOptions.hidden{display:none;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
   /* Clear liquid glass — secondary action buttons */
   .card .link{position:relative;overflow:hidden;
     background:linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.04) 50%, rgba(0,0,0,.10) 100%);
@@ -221,14 +280,22 @@
     <h1 id="title">WSPuffer</h1>
     <p id="sub">Tap to puff up and rise. Stop tapping to shrink back down. Bigger = harder to fit through the coral.</p>
     <div id="chars"></div>
-    <button id="btn">Dive in</button>
+    <div class="cta-row">
+      <button id="homeBtn" class="link hidden" type="button">⌂ Home</button>
+      <button id="btn">▶ Play Now</button>
+    </div>
     <div id="cardBest" class="card-best hidden"></div>
     <div class="card-actions">
-      <button id="leaderboardBtn" class="link" type="button">🏆 Leaderboard</button>
-      <button id="achievementsBtn" class="link" type="button">🎖 Achievements</button>
+      <div class="action-row">
+        <button id="leaderboardBtn" class="link half" type="button">🏆 Leaderboard</button>
+        <button id="achievementsBtn" class="link half" type="button">🎖 Achievements</button>
+      </div>
+      <button id="signInBtn" class="link siwa" type="button"><span class="siwa-logo"></span><span class="siwa-text">Sign in with Apple</span></button>
       <button id="restoreBtn" class="link" type="button">Restore Purchases</button>
-      <button id="signInBtn" class="link" type="button">Sign in with Apple</button>
-      <button id="eraseBtn" class="link danger" type="button">Erase My Data</button>
+      <button id="moreBtn" class="link more-toggle" type="button">⋯ More</button>
+      <div id="moreOptions" class="hidden">
+        <button id="eraseBtn" class="link danger" type="button">Erase My Data</button>
+      </div>
     </div>
     <div class="legal">
       <a id="privacyLink" href="#" rel="noopener">Privacy Policy</a>
@@ -772,13 +839,15 @@ resize();
 var BEST_KEY = 'puff.best';
 var CHAR_KEY = 'puff.char';
 var SOUND_KEY = 'puff.sound';
+var PLAYS_KEY = 'puff.plays';
 var bestScore = parseInt(localStorage.getItem(BEST_KEY) || '0', 10);
 
 // ---------- Localization ----------
 var STRINGS = {
   en: {
     sub: 'Tap to puff up and rise. Stop tapping to shrink back down. Bigger = harder to fit through the coral.',
-    diveIn: 'Dive in', tryAgain: 'Try again', popped: 'Popped', newBest: 'New best!',
+    diveIn: '▶ Play Now', tryAgain: 'Try again', home: '⌂ Home', more: 'More', less: 'Less',
+    popped: 'Popped', newBest: 'New best!',
     scoreSep: 'Score', bestSep: 'Best',
     leaderboard: '🏆 Leaderboard', achievements: '🎖 Achievements',
     restore: 'Restore Purchases', signIn: 'Sign in with Apple', erase: 'Erase My Data',
@@ -802,7 +871,8 @@ var STRINGS = {
   },
   es: {
     sub: 'Toca para hincharte y subir. Deja de tocar para encoger. Más grande = más difícil pasar entre el coral.',
-    diveIn: 'A bucear', tryAgain: 'Reintentar', popped: 'Explotaste', newBest: '¡Nuevo récord!',
+    diveIn: '▶ Jugar', tryAgain: 'Reintentar', home: '⌂ Inicio', more: 'Más', less: 'Menos',
+    popped: 'Explotaste', newBest: '¡Nuevo récord!',
     scoreSep: 'Puntos', bestSep: 'Récord',
     leaderboard: '🏆 Clasificación', achievements: '🎖 Logros',
     restore: 'Restaurar compras', signIn: 'Iniciar con Apple', erase: 'Borrar mis datos',
@@ -826,7 +896,8 @@ var STRINGS = {
   },
   fr: {
     sub: 'Touche pour te gonfler et monter. Lâche pour rétrécir. Plus gros = plus dur de passer le corail.',
-    diveIn: 'Plonger', tryAgain: 'Réessayer', popped: 'Éclaté', newBest: 'Nouveau record !',
+    diveIn: '▶ Jouer', tryAgain: 'Réessayer', home: '⌂ Accueil', more: 'Plus', less: 'Moins',
+    popped: 'Éclaté', newBest: 'Nouveau record !',
     scoreSep: 'Score', bestSep: 'Meilleur',
     leaderboard: '🏆 Classement', achievements: '🎖 Succès',
     restore: 'Restaurer les achats', signIn: 'Se connecter avec Apple', erase: 'Effacer mes données',
@@ -850,7 +921,8 @@ var STRINGS = {
   },
   de: {
     sub: 'Tippe zum Aufblasen und Steigen. Loslassen zum Schrumpfen. Größer = schwieriger durch die Korallen.',
-    diveIn: 'Abtauchen', tryAgain: 'Nochmal', popped: 'Geplatzt', newBest: 'Neuer Rekord!',
+    diveIn: '▶ Spielen', tryAgain: 'Nochmal', home: '⌂ Start', more: 'Mehr', less: 'Weniger',
+    popped: 'Geplatzt', newBest: 'Neuer Rekord!',
     scoreSep: 'Punkte', bestSep: 'Bestwert',
     leaderboard: '🏆 Rangliste', achievements: '🎖 Erfolge',
     restore: 'Käufe wiederherstellen', signIn: 'Mit Apple anmelden', erase: 'Daten löschen',
@@ -874,7 +946,8 @@ var STRINGS = {
   },
   ja: {
     sub: 'タップで膨らんで上昇。離すと縮んで下降。大きいほどサンゴをくぐり抜けにくくなります。',
-    diveIn: 'ダイブ', tryAgain: 'もう一度', popped: 'パンク', newBest: 'ハイスコア!',
+    diveIn: '▶ プレイ', tryAgain: 'もう一度', home: '⌂ ホーム', more: 'その他', less: '閉じる',
+    popped: 'パンク', newBest: 'ハイスコア!',
     scoreSep: 'スコア', bestSep: 'ベスト',
     leaderboard: '🏆 ランキング', achievements: '🎖 実績',
     restore: '購入を復元', signIn: 'Appleでサインイン', erase: 'データを消去',
@@ -898,7 +971,8 @@ var STRINGS = {
   },
   pt: {
     sub: 'Toque para inflar e subir. Solte para encolher. Maior = mais difícil passar pelo coral.',
-    diveIn: 'Mergulhar', tryAgain: 'Tentar de novo', popped: 'Estourou', newBest: 'Novo recorde!',
+    diveIn: '▶ Jogar', tryAgain: 'Tentar de novo', home: '⌂ Início', more: 'Mais', less: 'Menos',
+    popped: 'Estourou', newBest: 'Novo recorde!',
     scoreSep: 'Pontos', bestSep: 'Recorde',
     leaderboard: '🏆 Ranking', achievements: '🎖 Conquistas',
     restore: 'Restaurar compras', signIn: 'Entrar com Apple', erase: 'Apagar dados',
@@ -944,7 +1018,13 @@ function applyLocale() {
   if ($('leaderboardBtn')) $('leaderboardBtn').textContent = t('leaderboard');
   if ($('achievementsBtn')) $('achievementsBtn').textContent = t('achievements');
   if ($('restoreBtn')) $('restoreBtn').textContent = t('restore');
-  if ($('signInBtn')) $('signInBtn').textContent = t('signIn');
+  if ($('signInBtn')) {
+    var siwaText = $('signInBtn').querySelector('.siwa-text');
+    if (siwaText) siwaText.textContent = t('signIn');
+    else $('signInBtn').textContent = t('signIn');
+  }
+  if ($('homeBtn')) $('homeBtn').textContent = t('home');
+  if ($('moreBtn')) $('moreBtn').textContent = '⋯ ' + t('more');
   if ($('eraseBtn')) $('eraseBtn').textContent = t('erase');
   if ($('privacyLink')) $('privacyLink').textContent = t('privacy');
   if ($('termsLink')) $('termsLink').textContent = t('terms');
@@ -1285,7 +1365,8 @@ document.getElementById('pBuy').addEventListener('click', function() {
 });
 document.getElementById('pCancel').addEventListener('click', closePurchase);
 
-function showOverlay(t, s, btnText, newlyUnlocked) {
+function showOverlay(t, s, btnText, newlyUnlocked, opts) {
+  opts = opts || {};
   title.textContent = t; sub.textContent = s; btn.textContent = btnText;
   if (newlyUnlocked && newlyUnlocked.length) {
     unlockBannerEl.textContent = '🎉 Unlocked: ' + newlyUnlocked.map(function(c){return c.name;}).join(', ');
@@ -1293,8 +1374,17 @@ function showOverlay(t, s, btnText, newlyUnlocked) {
   } else {
     unlockBannerEl.classList.add('hidden');
   }
-  renderChips();
-  updateCardBest();
+  var card = document.getElementById('card');
+  var hbtn = document.getElementById('homeBtn');
+  if (opts.dead) {
+    card.classList.add('dead');
+    if (hbtn) hbtn.classList.remove('hidden');
+  } else {
+    card.classList.remove('dead');
+    if (hbtn) hbtn.classList.add('hidden');
+    renderChips();
+    updateCardBest();
+  }
   overlay.classList.remove('hidden');
   hud.classList.add('hidden'); bestEl.classList.add('hidden');
 }
@@ -1325,6 +1415,23 @@ function showToast(msg) {
 function hideOverlay() {
   overlay.classList.add('hidden');
   hud.classList.remove('hidden'); bestEl.classList.remove('hidden');
+  var card = document.getElementById('card');
+  if (card) card.classList.remove('dead');
+  var hbtn = document.getElementById('homeBtn');
+  if (hbtn) hbtn.classList.add('hidden');
+}
+// Death screen → Home: reset overlay to the menu state without restarting.
+function goHome() {
+  title.textContent = 'WSPuffer';
+  sub.textContent = t('sub');
+  btn.textContent = t('diveIn');
+  var card = document.getElementById('card');
+  if (card) card.classList.remove('dead');
+  var hbtn = document.getElementById('homeBtn');
+  if (hbtn) hbtn.classList.add('hidden');
+  unlockBannerEl.classList.add('hidden');
+  renderChips();
+  updateCardBest();
 }
 
 function startGame() {
@@ -1342,6 +1449,8 @@ function startGame() {
   hud.textContent = '0';
   bestEl.textContent = bestScore ? 'BEST ' + bestScore : '';
   state = 'playing';
+  bumpPlays();
+  if (typeof checkAchievements === 'function') checkAchievements(0);
   initDecor();
   hideOverlay();
 }
@@ -1403,7 +1512,7 @@ function die() {
   setTimeout(function() {
     showOverlay(isNew && score > 0 ? t('newBest') : t('popped'),
       t('scoreSep') + ' ' + score + (bestScore ? '  ·  ' + t('bestSep') + ' ' + bestScore : ''),
-      t('tryAgain'), newlyUnlocked);
+      t('tryAgain'), newlyUnlocked, { dead: true });
   }, 600);
 }
 
@@ -2767,7 +2876,7 @@ var LEADERBOARD_ID = 'com.wyrickstudios.WSPuffer.bestscore';
 var GC_PLAYER_KEY  = 'puff.gc.player';
 var ACH_KEY        = 'puff.achievements';
 var SIWA_USER_KEY  = 'puff.siwa.user';
-var PLAYS_KEY      = 'puff.plays';
+// PLAYS_KEY defined near top with BEST_KEY etc.
 
 function getReportedAchievements() {
   try { return JSON.parse(localStorage.getItem(ACH_KEY) || '{}'); } catch (e) { return {}; }
@@ -2778,11 +2887,16 @@ function saveReportedAchievements(obj) {
 
 // Achievement catalogue — IDs MUST match what's configured in App Store Connect.
 var ACHIEVEMENTS = [
-  { id: 'com.wyrickstudios.WSPuffer.firstpop',    name: 'First Pop',     threshold: 1,  type: 'score' },
-  { id: 'com.wyrickstudios.WSPuffer.reefdiver',   name: 'Reef Diver',    threshold: 10, type: 'score' },
-  { id: 'com.wyrickstudios.WSPuffer.coralmaster', name: 'Coral Master',  threshold: 25, type: 'score' },
-  { id: 'com.wyrickstudios.WSPuffer.pufflegend',  name: 'Puff Legend',   threshold: 50, type: 'score' },
-  { id: 'com.wyrickstudios.WSPuffer.collector',   name: 'Reef Collector',threshold: 4,  type: 'owned' }
+  { id: 'com.wyrickstudios.WSPuffer.firstpop',     name: 'First Pop',      threshold: 1,   type: 'score' },
+  { id: 'com.wyrickstudios.WSPuffer.reefdiver',    name: 'Reef Diver',     threshold: 10,  type: 'score' },
+  { id: 'com.wyrickstudios.WSPuffer.coralmaster',  name: 'Coral Master',   threshold: 25,  type: 'score' },
+  { id: 'com.wyrickstudios.WSPuffer.pufflegend',   name: 'Puff Legend',    threshold: 50,  type: 'score' },
+  { id: 'com.wyrickstudios.WSPuffer.highdive',     name: 'High Dive',      threshold: 100, type: 'score' },
+  { id: 'com.wyrickstudios.WSPuffer.collector',    name: 'Reef Collector', threshold: 4,   type: 'owned' },
+  { id: 'com.wyrickstudios.WSPuffer.persistent',   name: 'Persistent',     threshold: 10,  type: 'plays' },
+  { id: 'com.wyrickstudios.WSPuffer.marathon',     name: 'Marathon',       threshold: 50,  type: 'plays' },
+  { id: 'com.wyrickstudios.WSPuffer.firstdive',    name: 'First Dive',     threshold: 1,   type: 'plays' },
+  { id: 'com.wyrickstudios.WSPuffer.tenpoints',    name: 'Getting Started',threshold: 5,   type: 'score' }
 ];
 
 function reportAchievementIfNew(ach) {
@@ -2796,13 +2910,22 @@ function reportAchievementIfNew(ach) {
     .catch(function (e) { console.warn('Achievement report failed:', e); });
 }
 
+function getPlays() {
+  return parseInt(localStorage.getItem(PLAYS_KEY) || '0', 10);
+}
+function bumpPlays() {
+  var n = getPlays() + 1;
+  try { localStorage.setItem(PLAYS_KEY, String(n)); } catch (e) {}
+  return n;
+}
 function checkAchievements(score) {
+  var plays = getPlays();
   for (var i = 0; i < ACHIEVEMENTS.length; i++) {
     var a = ACHIEVEMENTS[i];
     if (a.type === 'score' && score >= a.threshold) reportAchievementIfNew(a);
+    if (a.type === 'plays' && plays >= a.threshold) reportAchievementIfNew(a);
     if (a.type === 'owned') {
       var ownedPaid = getOwned().filter(function (id) { return id !== 'puffer'; }).length;
-      // Pufferfish is free, so "all" = the puffer + every paid char.
       if (ownedPaid + 1 >= a.threshold) reportAchievementIfNew(a);
     }
   }
@@ -2896,6 +3019,19 @@ if (signInBtnEl) {
       if (String(e).indexOf('canceled') === -1) showToast(t('signInFailed'));
       console.warn(e);
     });
+  });
+}
+
+// Home + More buttons
+var homeBtnEl = document.getElementById('homeBtn');
+if (homeBtnEl) homeBtnEl.addEventListener('click', goHome);
+
+var moreBtnEl = document.getElementById('moreBtn');
+var moreOptionsEl = document.getElementById('moreOptions');
+if (moreBtnEl && moreOptionsEl) {
+  moreBtnEl.addEventListener('click', function () {
+    var hidden = moreOptionsEl.classList.toggle('hidden');
+    moreBtnEl.textContent = hidden ? '⋯ ' + t('more') : '× ' + t('less');
   });
 }
 
