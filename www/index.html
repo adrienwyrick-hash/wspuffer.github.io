@@ -86,6 +86,13 @@
     position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 4px 12px rgba(0,0,0,.35);}
   .chip:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.14);}
   .chip canvas{position:static;width:48px !important;height:48px !important;}
+  .chip-emoji{display:inline-block;font-size:30px;line-height:1;
+    transform-origin:center;
+    animation:chipSwim 2.6s ease-in-out infinite;}
+  @keyframes chipSwim{
+    0%,100%{transform:scaleX(-1) translateY(0) rotate(-4deg);}
+    50%    {transform:scaleX(-1) translateY(-3px) rotate(4deg);}
+  }
   .chip .lbl{position:absolute;bottom:3px;font-size:9px;opacity:.7;letter-spacing:.5px;}
   .chip.locked{opacity:.55;cursor:not-allowed;}
   .chip.locked:hover{transform:none;}
@@ -223,6 +230,251 @@
   function easeIn(t) { return t * t; }
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
+  // ---- Splash environment (reef floor, bubbles, scuba divers) ----
+  var splashDecor = null;
+  function buildSplashDecor() {
+    var pillars = [];
+    var n = Math.max(4, Math.floor(sw / 220));
+    for (var i = 0; i < n; i++) {
+      var pw = rnd(70, 130);
+      var ph = rnd(sh * 0.22, sh * 0.38);
+      var cx = (i + 0.5) * (sw / n) + rnd(-30, 30);
+      var p = { x: cx - pw / 2, w: pw, h: ph,
+                seed: Math.random() * 100, hue: 290 + Math.random() * 80,
+                flowers: [] };
+      // dense flowers along this pillar
+      var fcount = Math.floor(ph / 22) + 3;
+      for (var f = 0; f < fcount; f++) {
+        var t = (f + 0.1 + Math.random() * 0.8) / fcount;
+        p.flowers.push({
+          side: Math.random() < 0.5 ? -1 : 1,
+          y: t * ph,
+          type: Math.floor(Math.random() * 3),
+          hue: 280 + Math.random() * 140,
+          size: 8 + Math.random() * 10,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+      pillars.push(p);
+    }
+    var bubbles = [];
+    var bc = Math.max(30, Math.floor((sw * sh) / 22000));
+    for (var b = 0; b < bc; b++) {
+      bubbles.push({ x: Math.random() * sw, y: Math.random() * sh,
+        r: rnd(1.8, 5), sp: rnd(22, 56), wob: Math.random() * Math.PI * 2,
+        a: rnd(0.3, 0.6) });
+    }
+    var divers = [];
+    var dn = sw > 700 ? 2 : 1;
+    for (var d = 0; d < dn; d++) {
+      divers.push({ x: rnd(-200, sw * 0.3), y: rnd(sh * 0.4, sh * 0.6),
+        sp: rnd(22, 36), ph: Math.random() * Math.PI * 2, bubbleT: 0 });
+    }
+    splashDecor = { pillars: pillars, bubbles: bubbles, divers: divers };
+  }
+
+  function drawSplashFlower(x, y, side, type, size, hue, t, phase) {
+    var sway = Math.sin(t * 2.2 + phase) * 1.8;
+    sctx.save();
+    sctx.translate(x + side * sway, y);
+    sctx.scale(side, 1);
+    if (type === 0) {
+      // anemone
+      sctx.strokeStyle = 'hsl(' + hue + ',85%,72%)';
+      sctx.lineWidth = 2.0;
+      sctx.lineCap = 'round';
+      var tend = 9;
+      for (var i = 0; i < tend; i++) {
+        var a = -Math.PI * 0.55 + (i / (tend - 1)) * Math.PI * 1.1;
+        var len = size * (0.9 + Math.sin(i + t * 2) * 0.12);
+        sctx.beginPath();
+        sctx.moveTo(0, 0);
+        sctx.quadraticCurveTo(Math.cos(a) * len * 0.6 + sway * 0.5,
+                              Math.sin(a) * len * 0.6,
+                              Math.cos(a) * len, Math.sin(a) * len);
+        sctx.stroke();
+      }
+      sctx.fillStyle = 'hsl(' + hue + ',90%,55%)';
+      sctx.beginPath(); sctx.arc(0, 0, size * 0.42, 0, Math.PI * 2); sctx.fill();
+      sctx.fillStyle = 'hsl(' + hue + ',95%,80%)';
+      sctx.beginPath(); sctx.arc(-size * 0.14, -size * 0.14, size * 0.18, 0, Math.PI * 2); sctx.fill();
+    } else if (type === 1) {
+      // polyp cluster
+      sctx.fillStyle = 'hsl(' + (hue - 20) + ',70%,38%)';
+      sctx.beginPath();
+      for (var k = 0; k < 6; k++) {
+        var ang = k * (Math.PI * 2 / 6);
+        sctx.moveTo(Math.cos(ang) * size, Math.sin(ang) * size);
+        sctx.arc(Math.cos(ang) * size * 0.5, Math.sin(ang) * size * 0.5, size * 0.55, 0, Math.PI * 2);
+      }
+      sctx.fill();
+      sctx.fillStyle = 'hsl(' + hue + ',95%,72%)';
+      for (var p = 0; p < 8; p++) {
+        var pa = p * 1.3;
+        sctx.beginPath();
+        sctx.arc(Math.cos(pa) * size * 0.35, Math.sin(pa) * size * 0.35, size * 0.18, 0, Math.PI * 2);
+        sctx.fill();
+      }
+    } else {
+      // sea fan
+      sctx.strokeStyle = 'hsl(' + hue + ',75%,58%)';
+      sctx.lineWidth = 2.2;
+      sctx.lineCap = 'round';
+      for (var bf = 0; bf < 6; bf++) {
+        var ba = -Math.PI * 0.55 + (bf / 5) * Math.PI * 1.1;
+        sctx.beginPath();
+        sctx.moveTo(0, 0);
+        sctx.quadraticCurveTo(Math.cos(ba) * size * 0.35,
+                              Math.sin(ba) * size * 0.35 - size * 0.2,
+                              Math.cos(ba) * size, Math.sin(ba) * size);
+        sctx.stroke();
+      }
+      sctx.fillStyle = 'hsl(' + hue + ',85%,68%)';
+      for (var df = 0; df < 6; df++) {
+        var da = -Math.PI * 0.55 + (df / 5) * Math.PI * 1.1;
+        sctx.beginPath();
+        sctx.arc(Math.cos(da) * size, Math.sin(da) * size, size * 0.18, 0, Math.PI * 2);
+        sctx.fill();
+      }
+    }
+    sctx.restore();
+  }
+
+  function drawSplashPillar(p, t, baseY) {
+    var pillX = p.x, pw = p.w, ph = p.h;
+    var top = baseY - ph;
+    // jagged clip
+    sctx.save();
+    sctx.beginPath();
+    sctx.moveTo(pillX, top);
+    var step = 10;
+    for (var y = top; y <= baseY; y += step) {
+      var bump = Math.sin((y + p.seed) * 0.22) * 5 + Math.sin((y + p.seed) * 0.71) * 2;
+      sctx.lineTo(pillX + bump, y);
+    }
+    sctx.lineTo(pillX + pw, baseY);
+    for (var y2 = baseY; y2 >= top; y2 -= step) {
+      var bump2 = Math.sin((y2 + p.seed + 19) * 0.24) * 5 + Math.cos((y2 + p.seed) * 0.6) * 2.5;
+      sctx.lineTo(pillX + pw + bump2, y2);
+    }
+    sctx.closePath();
+    sctx.clip();
+    var g = sctx.createLinearGradient(pillX, 0, pillX + pw, 0);
+    g.addColorStop(0, '#5b2a55');
+    g.addColorStop(0.5, '#8a3a78');
+    g.addColorStop(1, '#42204a');
+    sctx.fillStyle = g;
+    sctx.fillRect(pillX - 6, top, pw + 12, ph);
+    sctx.fillStyle = 'rgba(255,180,210,0.18)';
+    for (var sp = 0; sp < 16; sp++) {
+      var sy = top + ((sp * 37 + p.seed * 13) % ph);
+      var sx = pillX + ((sp * 11 + p.seed * 7) % pw);
+      sctx.beginPath(); sctx.arc(sx, sy, 1.6, 0, Math.PI * 2); sctx.fill();
+    }
+    sctx.restore();
+    // flowers (densely placed)
+    for (var i = 0; i < p.flowers.length; i++) {
+      var f = p.flowers[i];
+      var fx = f.side > 0 ? pillX + pw : pillX;
+      drawSplashFlower(fx, top + f.y, f.side, f.type, f.size, f.hue, t, f.phase);
+    }
+  }
+
+  function drawSplashReef(t, dt) {
+    if (!splashDecor) buildSplashDecor();
+    var baseY = sh - 30;
+    // dark seabed
+    var sg = sctx.createLinearGradient(0, baseY - 80, 0, sh);
+    sg.addColorStop(0, '#0a2030');
+    sg.addColorStop(1, '#020a14');
+    sctx.fillStyle = sg;
+    sctx.beginPath();
+    sctx.moveTo(0, sh);
+    sctx.lineTo(0, baseY);
+    for (var x = 0; x <= sw; x += 16) {
+      sctx.lineTo(x, baseY - 8 + Math.sin(x * 0.05) * 6 + Math.sin(x * 0.13) * 3);
+    }
+    sctx.lineTo(sw, sh);
+    sctx.closePath();
+    sctx.fill();
+    // pillars + flowers
+    for (var i = 0; i < splashDecor.pillars.length; i++) {
+      drawSplashPillar(splashDecor.pillars[i], t * 0.001, baseY);
+    }
+  }
+
+  function drawSplashBubbles(dt, now) {
+    if (!splashDecor) return;
+    var bs = splashDecor.bubbles;
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i];
+      b.y -= b.sp * dt;
+      b.x += Math.sin(now * 0.001 + b.wob) * 8 * dt;
+      if (b.y < -10) { b.y = sh + 10; b.x = Math.random() * sw; }
+      var bg = sctx.createRadialGradient(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.1, b.x, b.y, b.r);
+      bg.addColorStop(0, 'rgba(255,255,255,' + (b.a * 0.9) + ')');
+      bg.addColorStop(0.7, 'rgba(255,255,255,' + (b.a * 0.25) + ')');
+      bg.addColorStop(1, 'rgba(255,255,255,0)');
+      sctx.fillStyle = bg;
+      sctx.beginPath(); sctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); sctx.fill();
+    }
+  }
+
+  function drawScubaDiver(d, t, dt) {
+    sctx.save();
+    sctx.translate(d.x, d.y + Math.sin(t * 0.7 + d.ph) * 6);
+    // body (dark wetsuit)
+    sctx.fillStyle = '#1c2c41';
+    sctx.beginPath();
+    sctx.ellipse(0, 4, 22, 14, 0, 0, Math.PI * 2); sctx.fill();
+    // helmet
+    var hg = sctx.createRadialGradient(-4, -4, 2, 0, 0, 14);
+    hg.addColorStop(0, '#dfeaf6');
+    hg.addColorStop(0.7, '#7e9fb8');
+    hg.addColorStop(1, '#3a536a');
+    sctx.fillStyle = hg;
+    sctx.beginPath(); sctx.arc(0, -10, 13, 0, Math.PI * 2); sctx.fill();
+    // tank on back
+    sctx.fillStyle = '#cfa040';
+    sctx.fillRect(-22, -8, 6, 16);
+    // fins (animated kick)
+    var kick = Math.sin(d.ph + t * 8) * 4;
+    sctx.fillStyle = '#0b1f33';
+    sctx.beginPath();
+    sctx.moveTo(-18, 16);
+    sctx.lineTo(-30, 18 + kick);
+    sctx.lineTo(-30, 22 + kick);
+    sctx.lineTo(-18, 22);
+    sctx.closePath(); sctx.fill();
+    sctx.beginPath();
+    sctx.moveTo(-14, 18);
+    sctx.lineTo(-26, 22 - kick);
+    sctx.lineTo(-26, 26 - kick);
+    sctx.lineTo(-14, 24);
+    sctx.closePath(); sctx.fill();
+    // mask reflection highlight
+    sctx.fillStyle = 'rgba(255,255,255,0.35)';
+    sctx.beginPath();
+    sctx.ellipse(-3, -12, 4, 2, 0, 0, Math.PI * 2); sctx.fill();
+    sctx.restore();
+    // emit bubbles from helmet
+    d.bubbleT -= dt;
+    if (d.bubbleT <= 0) {
+      d.bubbleT = 0.2;
+      if (splashDecor) {
+        for (var bi = 0; bi < 3; bi++) {
+          splashDecor.bubbles.push({
+            x: d.x + 12, y: d.y - 14 + rnd(-2, 2),
+            r: rnd(1.8, 4), sp: rnd(30, 55),
+            wob: Math.random() * Math.PI * 2, a: rnd(0.4, 0.7)
+          });
+        }
+      }
+    }
+    d.x += d.sp * dt;
+    if (d.x > sw + 60) { d.x = -100; d.y = rnd(sh * 0.4, sh * 0.65); }
+  }
+
   function drawFish(x, y, scale, glow, angle) {
     var r = 22 * scale;
     sctx.save();
@@ -242,19 +494,37 @@
     sctx.lineTo(-r * 1.55, -r * 0.55);
     sctx.lineTo(-r * 1.55, r * 0.55);
     sctx.closePath(); sctx.fill();
-    // spikes (extend when puffed)
-    var puffT = Math.max(0, (scale - 1) / 0.9);
-    var spikeLen = r * (0.18 + puffT * 1.1);
+    // spikes (extend dramatically when puffed)
+    var puffT = Math.max(0, Math.min(1.6, (scale - 1) / 1.6));
+    var spikeLen = r * (0.18 + puffT * 1.4);
     if (spikeLen > 1) {
-      sctx.strokeStyle = puffT > 0.5 ? '#7a2f0a' : '#a85518';
-      sctx.lineWidth = Math.max(1.4, r * 0.08);
+      // shadow spikes first (darker, longer) for depth
+      sctx.strokeStyle = '#5a1f06';
+      sctx.lineWidth = Math.max(2.0, r * 0.11);
       sctx.lineCap = 'round';
-      for (var i = 0; i < 18; i++) {
-        var ang = (i / 18) * Math.PI * 2;
+      var spikeCount = 24;
+      for (var i = 0; i < spikeCount; i++) {
+        var ang = (i / spikeCount) * Math.PI * 2;
         sctx.beginPath();
         sctx.moveTo(Math.cos(ang) * r * 0.92, Math.sin(ang) * r * 0.92);
         sctx.lineTo(Math.cos(ang) * (r + spikeLen), Math.sin(ang) * (r + spikeLen));
         sctx.stroke();
+      }
+      // bright tip highlights when very puffed
+      if (puffT > 0.4) {
+        sctx.strokeStyle = 'rgba(255,220,140,' + (puffT * 0.9) + ')';
+        sctx.lineWidth = Math.max(1.2, r * 0.05);
+        for (var j = 0; j < spikeCount; j++) {
+          var aj = (j / spikeCount) * Math.PI * 2;
+          var tipX = Math.cos(aj) * (r + spikeLen);
+          var tipY = Math.sin(aj) * (r + spikeLen);
+          var midX = Math.cos(aj) * (r + spikeLen * 0.6);
+          var midY = Math.sin(aj) * (r + spikeLen * 0.6);
+          sctx.beginPath();
+          sctx.moveTo(midX, midY);
+          sctx.lineTo(tipX, tipY);
+          sctx.stroke();
+        }
       }
     }
     // body
@@ -323,12 +593,23 @@
     }
   }
 
+  var splashLast = 0;
   function frame(now) {
     if (!startT) startT = now;
     var t = now - startT;
+    var dt = Math.min(0.033, (now - (splashLast || now)) / 1000);
+    splashLast = now;
     if (skipToPuff && t < 2000) { startT = now - 2000; t = 2000; skipToPuff = false; }
 
     drawBg();
+    // Reef + bubbles + divers (rendered before the title fish so they sit behind it)
+    drawSplashReef(t, dt);
+    drawSplashBubbles(dt, now);
+    if (splashDecor) {
+      for (var dvi = 0; dvi < splashDecor.divers.length; dvi++) {
+        drawScubaDiver(splashDecor.divers[dvi], now * 0.001, dt);
+      }
+    }
 
     var cx = sw / 2, cy = sh / 2;
     // measure title for fish path
@@ -367,16 +648,33 @@
       fishX = startX + (cx - startX) * e;
       fishY = startY + (cy - startY) * e;
       fishAngle = (1 - e) * 0.2;
-    } else if (t < 2500) {
-      // Phase 4: puff up at center with growing glow
-      var pp = (t - 2000) / 500;
+    } else if (t < 2700) {
+      // Phase 4: dramatic puff at center — quick inhale, then BIG bounce-out
+      var pp = (t - 2000) / 700;
       fishX = cx; fishY = cy;
-      fishScale = 1 + easeOut(pp) * 0.9; // 1.0 → 1.9
-      fishGlow = pp;
+      if (pp < 0.18) {
+        // small inhale (briefly squeeze under 1.0)
+        fishScale = 1 - (pp / 0.18) * 0.12;
+      } else {
+        var q = (pp - 0.18) / 0.82;
+        // overshoot bounce — peaks above target then settles
+        var bounce = 1 + easeOut(q) * 1.6;             // 1 → 2.6
+        var overshoot = Math.sin(q * Math.PI) * 0.18;  // small spike at the middle
+        fishScale = bounce + overshoot;
+      }
+      fishGlow = Math.min(1, pp * 1.6);
+      // Brief white flash at the moment the puff hits its peak
+      if (pp > 0.55 && pp < 0.72) {
+        var fl = 1 - Math.abs(pp - 0.635) / 0.085;
+        sctx.save();
+        sctx.fillStyle = 'rgba(255,245,210,' + (fl * 0.35) + ')';
+        sctx.fillRect(0, 0, sw, sh);
+        sctx.restore();
+      }
     } else if (!dismissed) {
       // Phase 5: dismiss splash
       fishX = cx; fishY = cy;
-      fishScale = 1.9; fishGlow = 1;
+      fishScale = 2.6; fishGlow = 1;
       drawFish(fishX, fishY, fishScale, fishGlow, 0);
       splash.classList.add('gone');
       dismissed = true;
@@ -677,7 +975,8 @@ function renderChips() {
     var chip = document.createElement('div');
     chip.className = 'chip' + (unlocked ? '' : ' locked') + (selectedChar === ch.id && unlocked ? ' selected' : '');
     var label = unlocked ? ch.name.toUpperCase() : priceLabelFor(ch);
-    chip.innerHTML = '<div style="font-size:28px;line-height:1">' + ch.emoji + '</div>' +
+    var swimDelay = (i * 0.22).toFixed(2);
+    chip.innerHTML = '<div class="chip-emoji" style="animation-delay:' + swimDelay + 's">' + ch.emoji + '</div>' +
       '<div class="lbl">' + label + '</div>' +
       (unlocked ? '' : '<div class="lock">🔒</div>');
     (function(id, ok, character) {
