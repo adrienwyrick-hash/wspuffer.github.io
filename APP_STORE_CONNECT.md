@@ -7,7 +7,10 @@ Bundle ID: `com.wyrickstudios.WSPuffer`
 - [ ] Paid Apple Developer Program membership active ($99/yr)
 - [ ] App ID `com.wyrickstudios.WSPuffer` registered in [Apple Developer portal](https://developer.apple.com/account/resources/identifiers/list)
 - [ ] App created in [App Store Connect](https://appstoreconnect.apple.com/) with the same Bundle ID
-- [ ] In Xcode → App target → Signing & Capabilities: add **In-App Purchase** capability
+- [ ] In Xcode → App target → Signing & Capabilities, add these capabilities:
+  - **In-App Purchase**
+  - **Game Center**
+  - **Sign in with Apple**
 
 ## 2. In-app purchase products
 
@@ -24,6 +27,38 @@ For each product:
 - [ ] Localized description (e.g., "Adds Clownfish as a playable character.")
 - [ ] 1024×1024 review screenshot showing the character in the game
 - [ ] Submit for review with the first build
+
+## 2b. Game Center — Leaderboard + Achievements
+
+In App Store Connect → Your App → Services → **Game Center** → Enable.
+
+**Leaderboard** (Single → Classic):
+- Reference Name: `WSPuffer Best Score`
+- Leaderboard ID: `com.wyrickstudios.WSPuffer.bestscore`
+- Score Format Type: **Integer**
+- Score Submission Type: **Best Score**
+- Sort Order: **High to Low**
+- Add English localization: name "Best Score", score format suffix "puffs"
+
+**Achievements** (IDs must match exactly):
+
+| Reference Name      | Achievement ID                                       | Points | Hidden |
+|---------------------|------------------------------------------------------|--------|--------|
+| First Pop           | `com.wyrickstudios.WSPuffer.firstpop`                | 5      | No     |
+| Reef Diver (10)     | `com.wyrickstudios.WSPuffer.reefdiver`               | 10     | No     |
+| Coral Master (25)   | `com.wyrickstudios.WSPuffer.coralmaster`             | 25     | No     |
+| Puff Legend (50)    | `com.wyrickstudios.WSPuffer.pufflegend`              | 50     | No     |
+| Reef Collector      | `com.wyrickstudios.WSPuffer.collector`               | 10     | No     |
+
+For each achievement: add image, name, and "before earned" / "after earned" description in English.
+
+## 2c. Sign in with Apple
+
+1. In the Apple Developer portal → Identifiers → your App ID → enable the **Sign in with Apple** capability.
+2. Regenerate the provisioning profile if Xcode doesn't do it automatically.
+3. No App Store Connect entry required beyond the capability — Apple handles the rest.
+
+Note: Sign in with Apple is optional in WSPuffer (the app works fully without it). It's only used to personalize a welcome message and to give the user a "Delete my account" path that satisfies Apple guideline 4.8.
 
 ## 3. App Privacy (App Store Connect → App Privacy)
 
