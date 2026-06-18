@@ -2,11 +2,6 @@ node_modules/
 ios/App/Pods/
 ios/App/Podfile.lock
 ios/App/App/public/
-android/app/src/main/assets/public/
-android/.gradle/
-android/build/
-android/app/build/
-android/local.properties
 .DS_Store
 
 # Xcode

@@ -1,6 +1,6 @@
 # WSPuffer
 
-Pufferfish tap-dodger. Web + iOS + Android via Capacitor.
+Pufferfish tap-dodger. Web + iOS via Capacitor.
 
 ## Run locally (browser)
 ```
@@ -18,12 +18,6 @@ npx cap sync
 npm run ios
 ```
 Opens Xcode. Select your iPhone, click ▶.
-
-## Run on Android device
-```
-npm run android
-```
-Opens Android Studio. Plug in your phone (USB debugging on), click ▶.
 
 ## In-app purchases
 

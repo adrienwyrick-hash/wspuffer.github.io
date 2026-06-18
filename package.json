@@ -5,11 +5,9 @@
   "description": "WSPuffer — pufferfish tap-dodger",
   "scripts": {
     "dev": "node server.js",
-    "ios": "npx cap sync ios && npx cap open ios",
-    "android": "npx cap sync android && npx cap open android"
+    "ios": "npx cap sync ios && npx cap open ios"
   },
   "dependencies": {
-    "@capacitor/android": "^6.1.2",
     "@capacitor/core": "^6.1.2",
     "@capacitor/ios": "^6.1.2"
   },
