@@ -1453,7 +1453,8 @@ function startGame() {
   particles = [];
   score = 0;
   spawnTimer = 0.7;
-  gap = Math.max(180, H * 0.34);
+  // Use the smaller dimension so the gap stays passable in landscape too
+  gap = Math.max(160, Math.min(W, H) * 0.42);
   hud.textContent = '0';
   bestEl.textContent = bestScore ? 'BEST ' + bestScore : '';
   state = 'playing';
@@ -1537,15 +1538,20 @@ function update(dt) {
   fish.vy += gravity;
   fish.y += fish.vy * dt * 60;
 
-  // spawn corals
+  // Coral horizontal speed scales with screen width so the play feels
+  // consistent across portrait and landscape.
+  var pw = Math.max(56, Math.min(W, H) * 0.16);
+  var sp = Math.max(2.6, W * 0.0050) + Math.min(3.5, score * 0.05);
+
+  // Spawn corals on a distance basis so density is stable regardless of
+  // aspect: target ~1.5 corals visible at any time.
   spawnTimer -= dt;
   if (spawnTimer <= 0) {
     spawnCoral();
-    spawnTimer = Math.max(1.0, 1.6 - score * 0.015);
+    var spPerSec = sp * 60;
+    var targetGapPx = W / 1.5;
+    spawnTimer = Math.max(0.8, targetGapPx / spPerSec);
   }
-
-  var pw = 72;
-  var sp = Math.max(2.6, W * 0.0045) + Math.min(3.5, score * 0.05);
   for (var i = 0; i < corals.length; i++) {
     var p = corals[i];
     p.x -= sp;
