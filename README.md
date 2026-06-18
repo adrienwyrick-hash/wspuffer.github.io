@@ -1,34 +1,27 @@
-# WSPuffer
+# wspuffer.com
 
-Pufferfish tap-dodger. Web + iOS via Capacitor.
+Marketing site, support page, and legal docs for **WSPuffer** — a native iOS arcade game.
 
-## Run locally (browser)
-```
-npm run dev
-```
-Opens at http://localhost:5173
+| Page | URL |
+|------|-----|
+| Home | https://wspuffer.com/ |
+| Support | https://wspuffer.com/support.html |
+| Privacy Policy | https://wspuffer.com/privacy.html |
+| Terms of Use | https://wspuffer.com/terms.html |
 
-## Rebuild native after editing `www/`
-```
-npx cap sync
-```
+Served from this repo via GitHub Pages on the custom domain `wspuffer.com`.
 
-## Run on iOS device
-```
-npm run ios
-```
-Opens Xcode. Select your iPhone, click ▶.
+## Files
 
-## In-app purchases
+- `index.html` — landing page (canvas underwater scene + playable hero demo)
+- `support.html` — FAQ + contact email
+- `privacy.html` — privacy policy
+- `terms.html` — terms of use
+- `favicon.svg` — pufferfish favicon
+- `CNAME` — custom domain config
+- `.nojekyll` — skip Jekyll, serve files as-is
+- `PRIVACY_POLICY.md` / `APP_STORE_CONNECT.md` — submission docs kept here for convenience
 
-Three Non-Consumable products at $0.99 each, configured in App Store Connect with these exact IDs:
+## iOS app source
 
-- `com.wyrickstudios.WSPuffer.clownfish`
-- `com.wyrickstudios.WSPuffer.swordfish`
-- `com.wyrickstudios.WSPuffer.shark`
-
-For local testing, the App scheme can point at `ios/App/App/Products.storekit` (Run → Options → StoreKit Configuration).
-
-## App Store submission
-
-See [APP_STORE_CONNECT.md](APP_STORE_CONNECT.md) for the full submission checklist and [PRIVACY_POLICY.md](PRIVACY_POLICY.md) for the policy that needs to be hosted at a public URL.
+The native iOS WSPuffer game lives in a separate Xcode project (not in this repo).

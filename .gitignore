@@ -1,20 +1,4 @@
-node_modules/
-ios/App/Pods/
-ios/App/Podfile.lock
-ios/App/App/public/
 .DS_Store
-
-# Xcode
-**/xcuserdata/
-**/*.xcuserstate
-**/*.xcuserdatad/
-**/DerivedData/
-ios/App/build/
-
-# Logs
 *.log
-npm-debug.log*
-
-# Editor
 .vscode/
 .idea/
